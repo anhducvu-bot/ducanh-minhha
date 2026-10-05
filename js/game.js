@@ -1399,8 +1399,8 @@
   // ---------- Open / close / input ----------
   function setMsg(html, light) { msgEl.innerHTML = html; msgEl.hidden = !html; msgEl.classList.toggle("light", !!light); }
 
-  const START_MSG = '<b>Chạm để bắt đầu</b><span>Chạm để nhảy · chạm thêm lần nữa trên không để nhảy cao hơn<br>' +
-    "Nhảy lên slime · gom đủ 5 lễ vật · nhặt lì xì để qua cổng nhà gái!</span>";
+  const START_MSG = "<b>Chạm để bắt đầu</b><span>Chạm để nhảy<br>Nhảy lên đầu slime để hạ gục<br>" +
+    "Gom anh em bê tráp và 5 lễ vật<br>Nhặt lì xì để qua cổng nhà gái!</span>";
 
   function openGame() {
     overlay.hidden = false;
