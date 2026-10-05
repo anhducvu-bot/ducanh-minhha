@@ -227,8 +227,6 @@
     friendA: makeSprite(FRIEND_TOP.concat(FRIEND_LEGS.a)),
     friendB: makeSprite(FRIEND_TOP.concat(FRIEND_LEGS.b)),
     bride: makeSprite(BRIDE),
-    mom: makeSprite(BRIDE, { r: "#7b5aa6", R: "#5c3f85" }),
-    dad: makeSprite(BRIDE, { r: "#8a2232", R: "#5a1520", h: "#b9b9b9", g: "#8a2232" }),
     cousin: makeSprite(COUSIN),
     cousinBlock: makeSprite(COUSIN_BLOCK),
     auntie: makeSprite(AUNTIE),
@@ -811,11 +809,11 @@
     { type: "item", kind: "hoaqua", x: 4800 }, { type: "friend", x: 5150 },
   ];
   const CAMEOS = [
-    { kind: "auntie", x: 820, say: "Đẹp trai thế!" },
-    { kind: "fan", x: 2250, say: `Cố lên ${W.groom.name}!` },
-    { kind: "auntie", x: 3300, say: "Đi rước dâu à? Chúc mừng nhé!" },
-    { kind: "auntie", x: TRAIN_X - 60, say: "Tàu đến! Đứng sát vào!" },
-    { kind: "fan", x: 4950, say: "Sắp tới nhà gái rồi!" },
+    { kind: "auntie", name: "Cô bán trà đá", x: 820, say: "Đẹp trai thế!" },
+    { kind: "fan", name: "Hội bạn thân", x: 2250, say: `Cố lên ${W.groom.name}!` },
+    { kind: "auntie", name: "Bác bán cốm", x: 3300, say: "Đi rước dâu à? Chúc mừng nhé!" },
+    { kind: "auntie", name: "Cô chủ quán cà phê", x: TRAIN_X - 60, say: "Tàu đến! Đứng sát vào!" },
+    { kind: "fan", name: "Hội bạn thân", x: 4950, say: "Sắp tới nhà gái rồi!" },
   ];
 
   const speedAt = (prog) => SPEED0 + (SPEED1 - SPEED0) * prog;
@@ -864,7 +862,7 @@
       if (k2 < 0.24) list.push({ type: "lixi", x: Math.round(cx - 3), y: GY - 46 });
       else if (k2 < 0.52) for (let i = 0; i < 3; i++) list.push({ type: "heart", x: Math.round(cx - 18 + i * 12), y: GY - 14 });
     }
-    for (const c of CAMEOS) list.push({ type: "cameo", kind: c.kind, x: c.x, say: c.say });
+    for (const c of CAMEOS) list.push({ type: "cameo", kind: c.kind, name: c.name, x: c.x, say: c.say });
     return list.sort((a, b) => a.x - b.x);
   }
 
@@ -877,7 +875,8 @@
     el.className = "gbubble" + (o.cls ? " " + o.cls : "");
     el.textContent = text;
     bubbleLayer.appendChild(el);
-    bubbles.push(Object.assign({ el }, o, { key, life: o.life || 1.8 }));
+    const life = Math.max(o.life || 0, o.cls ? 0 : Math.min(3, 0.9 + 0.06 * [...text].length));
+    bubbles.push(Object.assign({ el }, o, { key, life: life || 1.8 }));
   }
   function clearBubbles() { bubbles.forEach((b) => b.el.remove()); bubbles = []; }
   function updateBubbles(dt) {
@@ -895,6 +894,54 @@
       b.el.style.opacity = Math.min(1, b.life * 3).toFixed(2);
     }
   }
+
+  // ---------- Dialogue box (story lines stay put while the street scrolls) ----------
+  const dlgEl = $("gameDialog"), dlgFace = dlgEl.querySelector(".gd-face"), dlgName = dlgEl.querySelector(".gd-name"), dlgText = dlgEl.querySelector(".gd-text");
+  const hintEl = document.querySelector(".game-hint");
+  const readTime = (text) => Math.max(1.8, Math.min(4, 1.3 + 0.07 * [...text].length)); // longer lines stay longer
+  let dlg = { cur: null, t: 0, queue: [] };
+  function faceURL(spr) { // the speaker's head, cropped from their sprite
+    const c = document.createElement("canvas");
+    c.width = 12; c.height = 11;
+    c.getContext("2d").drawImage(spr, 0, 0);
+    return c.toDataURL();
+  }
+  let SPEAKERS = null;
+  function speakers() {
+    return SPEAKERS || (SPEAKERS = {
+      groom: { name: W.groom.name, face: faceURL(SPR.runB) },
+      bride: { name: W.bride.name, face: faceURL(SPR.bride) },
+      friend: { name: "Anh em bê tráp", face: faceURL(SPR.friendA) },
+      cousin: { name: "Chị em nhà gái", face: faceURL(SPR.cousin) },
+      auntie: { name: "Cô bán trà đá", face: faceURL(SPR.auntie) },
+      fan: { name: "Hội bạn thân", face: faceURL(SPR.fan) },
+    });
+  }
+  function talk(who, text, o = {}) { // who = speaker key, or null for a narrator line
+    const sp = who ? speakers()[who] : null;
+    const line = { name: o.name || (sp && sp.name) || "", face: sp ? sp.face : "", text, dur: o.dur || readTime(text), narrator: !who };
+    if (o.now) { dlg.queue = []; dlg.cur = null; dlg.gap = 0; } // scene lines replace whatever is showing
+    else if (dlg.queue.length >= 3) dlg.queue.shift(); // never let a backlog build up
+    dlg.queue.push(line);
+    if (o.now) updateDialog(0);
+    return line.dur;
+  }
+  function clearDialog() { dlg = { cur: null, t: 0, queue: [] }; dlgEl.hidden = true; }
+  function updateDialog(dt) {
+    if (dlg.cur) { dlg.t += dt; if (dlg.t >= dlg.cur.dur) { dlg.cur = null; dlgEl.hidden = true; dlg.gap = 0.15; } }
+    if (dlg.gap > 0) { dlg.gap -= dt; return; }
+    if (!dlg.cur && dlg.queue.length) {
+      dlg.cur = dlg.queue.shift(); dlg.t = 0;
+      dlgEl.classList.toggle("narrator", dlg.cur.narrator);
+      dlgFace.hidden = !dlg.cur.face; if (dlg.cur.face) dlgFace.src = dlg.cur.face;
+      dlgName.textContent = dlg.cur.name; dlgName.hidden = !dlg.cur.name;
+      dlgText.textContent = dlg.cur.text;
+      dlgEl.hidden = false;
+    }
+  }
+  const HINT = hintEl.textContent;
+  function setHint(text, hot) { hintEl.textContent = text || hintTextDefault(); hintEl.classList.toggle("hot", !!hot); }
+  function hintTextDefault() { return matchMedia("(hover: hover) and (pointer: fine)").matches ? "Nhấn Space hoặc click để nhảy" : HINT; }
 
   const OUCH = ["Ối giời ơi!", "Ui da!", "Toang rồi!", "Đau quá mẹ ơi!"];
   const FRIEND_LINES = ["Đợi anh em với!", "Bê tráp cho!", "Anh em tới đây!", "Đi rước dâu nào!"];
@@ -918,7 +965,8 @@
     followers = 0; yHist = [];
     power = { ride: 0, slow: 0, shield: false };
     zoneShown = -1; train = null; trainDone = false;
-    gate = { phase: "", t: 0, paid: 0, meter: 0, alpha: 1, bonus: "", nextPay: 0, lastTalk: 0 };
+    gate = { phase: "", t: 0, paid: 0, meter: 0, alpha: 1, bonus: "", nextPay: 0, lastTalk: 0, readUntil: 0 };
+    clearDialog(); setHint("");
     celebT = 0; hopT = 0; nextFirework = 0; arriveClock = 0; night = 0; hudCache = "";
     hud.tray.querySelectorAll("img").forEach((i) => i.classList.remove("got"));
     updateHud();
@@ -969,11 +1017,12 @@
   function slimeHop(e) { return Math.max(0, Math.sin(t * 4 + e.phase)) * 4; }
 
   // Gate layout (relative to the gate's x on screen)
-  const COUSIN_X = [-5, 9], BRIDE_X = 34, MOM_X = 50, DAD_X = 62, BLOCK_X = -20, MEET_X = 22;
+  const COUSIN_X = [-5, 9], BRIDE_X = 34, BLOCK_X = -20, MEET_X = 22;
 
   function update(rdt) {
     t += rdt;
     updateBubbles(rdt);
+    updateDialog(rdt);
     updateAmbient(rdt);
     if (state === "paused" || state === "idle") return;
     if (power.ride > 0) power.ride -= rdt;
@@ -987,7 +1036,7 @@
       speedMul = Math.min(1, speedMul + dt * 0.8);
       cam += speedAt(prog) * speedMul * (power.ride > 0 ? 1.35 : 1) * dt;
       const z = zoneAt(cam + PX);
-      if (z.id !== zoneShown) { zoneShown = z.id; say(z.name, { screen: true, cls: "zone", life: 2.2 }); }
+      if (z.id !== zoneShown) { zoneShown = z.id; talk(null, `— ${z.name} —`, { dur: 1.8 }); }
       if (!train && !trainDone && cam + VW > TRAIN_X) {
         train = { sx: VW + 8 };
         say("Tu tuuu! 🚂", { follow: "train", life: 1.6 });
@@ -995,11 +1044,11 @@
       camStop = COURSE + 7 - VW * 0.42;
       if (cam >= camStop) {
         cam = camStop; state = "arrive"; walkX = PX; arriveClock = clockNow(); power.ride = 0;
-        say("Lì xì đi rồi mới cho qua! 🧧", { x: COURSE + COUSIN_X[0] + 12, y: GY - 21, life: 2.4, key: "cousin" });
+        gate.readUntil = talk("cousin", "Lì xì đi rồi mới cho qua! 🧧", { now: true });
       }
     } else if (state === "arrive") {
       walkX = Math.min(gx + BLOCK_X, walkX + 55 * dt);
-      if (walkX >= gx + BLOCK_X && pl.onGround) { state = "gate"; gate.phase = "pay"; gate.t = 0; gate.nextPay = 0.4; }
+      if (walkX >= gx + BLOCK_X && pl.onGround) { state = "gate"; gate.phase = "pay"; gate.t = 0; gate.nextPay = Math.max(0.4, (gate.readUntil || 0) - 0.6); }
     } else if (state === "gate") {
       gate.t += dt;
       if (gate.phase === "pay") {
@@ -1012,19 +1061,19 @@
             gate.bonus = "lixi"; openGate("Đủ rồi! Mời chú rể vào!");
           } else {
             gate.phase = "flatter";
-            say("Chưa đủ lì xì! Nịnh đi nào!", { x: COURSE + 8, y: GY - 21, life: 2.2, key: "cousin" });
-            setMsg("<b>Chạm liên tục để nịnh!</b>", true);
+            talk("cousin", "Chưa đủ lì xì! Nịnh đi nào!", { now: true });
+            setHint("👆 Chạm liên tục để nịnh!", true);
           }
         }
       } else if (gate.phase === "open") {
         gate.alpha = Math.max(0, gate.alpha - dt * 1.6);
-        if (gate.t > 0.75) { state = "enter"; setMsg(""); }
+        if (gate.t > 0.75) { state = "enter"; setHint(""); }
       }
     } else if (state === "enter") {
       walkX = Math.min(gx + MEET_X, walkX + 50 * dt);
       if (walkX >= gx + MEET_X && pl.onGround) {
         state = "celebrate"; celebT = 0;
-        say("Chào con rể! 💕", { x: COURSE + MOM_X + 6, y: GY - 21, life: 2.4 });
+        talk("bride", "Anh đến rồi! 💕", { now: true });
       }
     } else if (state === "celebrate" || state === "done") {
       celebT += dt; hopT += dt;
@@ -1034,7 +1083,7 @@
         nextFirework = t + (state === "done" ? 0.9 : 0.35);
         burst(cam + 20 + Math.random() * (VW - 40), 18 + Math.random() * 35, ["#ffd75a", "#ff8a65", "#f48fb1", "#ffffff", "#d23c3c"], 18, 45);
       }
-      if (state === "celebrate" && celebT > 2.8) showResult();
+      if (state === "celebrate" && celebT > 3.4) showResult();
     }
 
     if (train) { train.sx -= 230 * dt; if (train.sx < -300) { train = null; trainDone = true; } }
@@ -1070,7 +1119,7 @@
 
   function openGate(line) {
     gate.phase = "open"; gate.t = 0;
-    say(line, { x: COURSE + 8, y: GY - 21, life: 2, key: "cousin" });
+    talk("cousin", line, { now: true });
     burst(COURSE + 8, GY - 14, ["#f48fb1", "#ffd75a", "#ffffff"], 16, 40);
   }
 
@@ -1079,11 +1128,11 @@
     const box = { x: px + 3, y: pl.y - 13, w: 7, h: 13 };
     const riding = power.ride > 0;
     for (const e of ents) {
-      if (e.x > px + 48) break;
-      if (e.done || e.x + 46 < px) continue;
+      if (e.x > Math.max(px + 48, cam + VW)) break;
+      if (e.done || (e.x + 46 < px && e.type !== "cameo")) continue;
       switch (e.type) {
         case "cameo":
-          if (!e.said && e.x < px + 34) { e.said = true; say(e.say, { x: e.x + 6, y: GY - (e.kind === "fan" ? 34 : 21), life: 2.4 }); }
+          if (!e.said && e.x < cam + VW - 16) { e.said = true; e.talking = talk(e.kind, e.say, { name: e.name }); }
           break;
         case "heart": case "lixi": {
           const ib = e.type === "heart" ? { x: e.x, y: e.y, w: 7, h: 6 } : { x: e.x, y: e.y, w: 6, h: 7 };
@@ -1101,7 +1150,7 @@
           popup(e.x, e.y - 2, "+" + PTS.item, "#ffd75a");
           say(ITEMS[e.kind].name + "!", { x: e.x + 4, y: e.y - 3, cls: "label", rise: true, life: 1.1 });
           burst(e.x + 4, e.y + 4, ["#ffd75a", "#ffffff", "#d23c3c"], 12, 35);
-          if (stats.items.length === ITEM_ORDER.length) say(`Đủ lễ! +${PTS.fullSet}`, { screen: true, cls: "zone", life: 2 });
+          if (stats.items.length === ITEM_ORDER.length) talk(null, `🎉 Đủ lễ! +${PTS.fullSet}`, { dur: 2 });
           break;
         case "power":
           if (!hit(box, { x: e.x, y: e.y, w: 8, h: 8 })) break;
@@ -1117,7 +1166,7 @@
           if (followers < MAX_FRIENDS) followers++;
           stats.friends++;
           popup(e.x, GY - 22, "+" + PTS.friend, "#ffd75a");
-          say(pick(FRIEND_LINES), { x: e.x + 6, y: GY - 19, life: 1.4 });
+          talk("friend", pick(FRIEND_LINES));
           break;
         case "slime": {
           const hop = slimeHop(e), sb = { x: e.x + 1, y: GY - 7 - hop, w: 8, h: 7 };
@@ -1262,8 +1311,6 @@
     if (gx < VW + 90) {
       const happy = state === "celebrate" || state === "done";
       const hop = (k) => (happy ? Math.round(-Math.abs(Math.sin(hopT * 7 + k)) * 3) : 0);
-      ctx.drawImage(SPR.mom, gx + MOM_X, GY - 18 + hop(2));
-      ctx.drawImage(SPR.dad, gx + DAD_X, GY - 18 + hop(3));
       ctx.drawImage(SPR.bride, gx + BRIDE_X, GY - 18 + hop(0));
       if (gate.alpha > 0) {
         const block = state !== "gate" || gate.phase !== "open";
@@ -1384,18 +1431,18 @@
     document.body.classList.remove("game-open");
     cancelAnimationFrame(raf);
     state = "closed";
-    clearBubbles();
+    clearBubbles(); clearDialog(); setHint("");
     refreshMini();
   }
 
   function onTap() {
-    if (state === "idle") { state = "run"; setMsg(""); say("Đi rước dâu thôi!", { follow: "groom", life: 1.6 }); return; }
+    if (state === "idle") { state = "run"; setMsg(""); talk("groom", "Đi rước dâu thôi!"); return; }
     if (state === "paused") { state = "run"; setMsg(""); last = performance.now(); return; }
     if (state === "gate" && gate.phase === "flatter") {
       gate.meter = Math.min(1, gate.meter + 0.1);
       fx.push({ x: cam + walkX + 6 + (Math.random() - 0.5) * 8, y: GY - 18, vx: (Math.random() - 0.5) * 20, vy: -40, life: 0.9, heart: true });
-      if (t - gate.lastTalk > 0.7) { gate.lastTalk = t; say(pick(COMPLIMENTS), { follow: "groom", life: 0.9 }); }
-      if (gate.meter >= 1) { gate.bonus = "flatter"; setMsg(""); openGate("Thôi được rồi, mời vào!"); }
+      if (t - gate.lastTalk > 1.1) { gate.lastTalk = t; say(pick(COMPLIMENTS), { follow: "groom", life: 1.3 }); }
+      if (gate.meter >= 1) { gate.bonus = "flatter"; setHint(""); openGate("Thôi được rồi, mời vào!"); }
       return;
     }
     if (state === "run" || state === "arrive" || state === "enter") jump();
@@ -1438,6 +1485,7 @@
 
   function showResult() {
     state = "done";
+    clearDialog();
     const n = stats.items.length;
     const rows = [
       [`Slime hạ gục × ${stats.slimes}`, stats.slimes * PTS.slime],
@@ -1513,9 +1561,7 @@
     });
   }).observe(pv);
 
-  if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
-    document.querySelector(".game-hint").textContent = "Nhấn Space hoặc click để nhảy";
-  }
+  setHint("");
   hud.groom.style.backgroundImage = `url(${SPR.runB.toDataURL()})`;
   hud.tray.innerHTML = ITEM_ORDER.map((k) => `<img src="${SPR.items[k].toDataURL()}" data-k="${k}" alt="${ITEMS[k].name}" title="${ITEMS[k].name}">`).join("");
   buildBackground();

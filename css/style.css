@@ -389,7 +389,7 @@ body.game-open { overflow: hidden; }
 .gbubble {
   position: absolute; left: 0; top: 0; white-space: nowrap; will-change: transform;
   background: #fff8ee; color: #2a1410; border: 2px solid #2a1410; box-shadow: 2px 2px 0 rgba(0,0,0,.25);
-  padding: 0 6px 1px; font-size: 17px; line-height: 1.1;
+  padding: 0 6px 1px; font-size: 19px; line-height: 1.1;
 }
 .gbubble::after {
   content: ""; position: absolute; left: 50%; bottom: -8px; margin-left: -4px;
@@ -399,6 +399,22 @@ body.game-open { overflow: hidden; }
 .gbubble.zone { background: rgba(42, 20, 16, .78); color: #ffd75a; border-color: #e8b84a; font-size: 24px; padding: 2px 12px; }
 .gbubble.label::after, .gbubble.zone::after { display: none; }
 .game-msg.light { background: none; justify-content: flex-start; padding-top: 10px; }
+/* Dialogue box over the sky: story lines stay put while the street scrolls */
+.game-dialog {
+  position: absolute; left: 6px; right: 6px; top: 6px; display: flex; align-items: center; gap: 8px;
+  background: #fff8ee; color: #2a1410; border: 3px solid #2a1410;
+  box-shadow: 0 0 0 2px #e8b84a, 3px 3px 0 2px rgba(0, 0, 0, .3);
+  padding: 4px 10px 5px 6px; font-size: 21px; line-height: 1.1; pointer-events: none;
+  animation: dlg-in .15s ease-out;
+}
+.game-dialog[hidden] { display: none; }
+.game-dialog.narrator { justify-content: center; background: rgba(42, 20, 16, .82); color: #ffd75a; border-color: #e8b84a; font-size: 23px; }
+.gd-face { width: 34px; height: 31px; flex: none; image-rendering: pixelated; background: #f4ead9; border: 2px solid #2a1410; }
+.gd-face[hidden] { display: none; }
+.gd-name { display: block; font-weight: 400; font-size: 17px; color: #9e1f24; }
+.gd-name[hidden] { display: none; }
+@keyframes dlg-in { from { transform: translateY(-6px); opacity: 0; } }
+.game-hint.hot { opacity: 1; color: #ffd75a; font-size: 24px; animation: blink 1s steps(2) infinite; }
 #gameCanvas {
   display: block; image-rendering: pixelated; image-rendering: crisp-edges;
   outline: 3px solid #e8b84a; outline-offset: 0;

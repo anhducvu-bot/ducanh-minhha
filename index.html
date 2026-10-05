@@ -12,8 +12,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@500;700&family=VT323&display=swap&subset=vietnamese" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=202610050019" />
-  <script src="config.js?v=202610050019"></script>
+  <link rel="stylesheet" href="css/style.css?v=202610050036" />
+  <script src="config.js?v=202610050036"></script>
 </head>
 <body class="locked">
   <div class="backdrop" aria-hidden="true"></div>
@@ -213,6 +213,10 @@
     <div class="game-stage">
       <canvas id="gameCanvas" width="195" height="150"></canvas>
       <div class="game-bubbles" id="gameBubbles"></div>
+      <div class="game-dialog" id="gameDialog" hidden aria-live="polite">
+        <img class="gd-face" alt="" />
+        <div class="gd-body"><b class="gd-name"></b><span class="gd-text"></span></div>
+      </div>
       <div class="game-msg" id="gameMsg" hidden></div>
     </div>
     <p class="game-hint">Chạm bất kỳ đâu để nhảy</p>
@@ -229,10 +233,10 @@
 
   <audio id="bgMusic" loop preload="none"></audio>
 
-  <script src="js/main.js?v=202610050019"></script>
-  <script src="js/effects.js?v=202610050019"></script>
-  <script src="js/rsvp.js?v=202610050019"></script>
-  <script src="js/game.js?v=202610050019"></script>
-  <script src="js/nav.js?v=202610050019"></script>
+  <script src="js/main.js?v=202610050036"></script>
+  <script src="js/effects.js?v=202610050036"></script>
+  <script src="js/rsvp.js?v=202610050036"></script>
+  <script src="js/game.js?v=202610050036"></script>
+  <script src="js/nav.js?v=202610050036"></script>
 </body>
 </html>
