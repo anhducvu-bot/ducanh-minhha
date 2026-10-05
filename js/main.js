@@ -50,6 +50,7 @@
   // Cover + desktop backdrop
   const cover = W.coverPhoto || W.photos[0];
   $("#coverImg").src = cover;
+  if (W.coverText === "bottom") $(".cover").classList.add("text-bottom");
   document.documentElement.style.setProperty("--backdrop-img", `url("${cover}")`);
 
   // Map

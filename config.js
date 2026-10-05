@@ -55,6 +55,7 @@ window.WEDDING = {
 
   // Photos (put files in assets/photos/). First one is used on the cover.
   coverPhoto: "assets/photos/cover.jpeg",
+  coverText: "top", // where the names sit on the cover photo: "top" or "bottom"
   photos: [
     "assets/photos/1.jpeg",
     "assets/photos/2.jpeg",
