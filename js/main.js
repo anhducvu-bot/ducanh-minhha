@@ -33,19 +33,17 @@
     else el.textContent = v;
   });
 
-  // Parents' names: keep "Ông." / "Bà." and the full name as units, so a long
-  // name moves to its own line instead of breaking in the middle.
-  $$(".person").forEach((el) => {
-    const m = el.textContent.match(/^(\S{1,6}\.)\s+(.+)$/);
-    if (!m) return;
-    el.textContent = "";
-    [m[1], m[2]].forEach((part, i) => {
-      const span = document.createElement("span");
-      span.textContent = part;
-      el.append(span);
-      if (i === 0) el.append(" ");
-    });
-  });
+  // Parents' names: "Ông. Nguyễn Bội Hồng Minh" must always stay on ONE line.
+  // The two family columns size to their names; if side by side doesn't fit
+  // the screen, stack Nhà Trai above Nhà Gái (names keep their full size).
+  const familyGrid = $(".family-grid");
+  function fitFamilies() {
+    familyGrid.classList.remove("stack");
+    familyGrid.classList.toggle("stack", familyGrid.scrollWidth > familyGrid.clientWidth + 1);
+  }
+  fitFamilies();
+  window.addEventListener("resize", fitFamilies);
+  if (document.fonts) document.fonts.ready.then(fitFamilies);
 
   document.title = `Thiệp cưới ${W.groom.name} & ${W.bride.name}`;
 

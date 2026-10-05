@@ -179,10 +179,14 @@ body.locked .site-nav { transform: translateY(-100%); }
 @keyframes beat { 50% { transform: scale(1.12); } }
 
 /* ---------- Families ---------- */
-.family-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 26px; }
+.family-grid { display: grid; grid-template-columns: auto auto; justify-content: space-evenly; column-gap: 12px; margin-bottom: 26px; }
 .family h3 { font-family: var(--font-head); color: var(--red); font-size: .85rem; letter-spacing: .25em; text-transform: uppercase; margin: 0 0 8px; }
-.family p { font-size: clamp(.82rem, 3.9vw, .98rem); }
-.person span { display: inline-block; }
+.family p { font-size: .98rem; }
+.person { white-space: nowrap; } /* honorific + full name always on one line */
+.family-grid.stack { grid-template-columns: 1fr; gap: 0; }
+.family-grid.stack .family + .family::before {
+  content: ""; display: block; width: 48px; height: 1px; margin: 16px auto 18px; background: var(--gold);
+}
 .announce { font-style: italic; color: var(--muted); }
 .couple-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; }
 .couple-row .amp { font-size: 2.4rem; }
