@@ -33,6 +33,20 @@
     else el.textContent = v;
   });
 
+  // Parents' names: keep "Ông." / "Bà." and the full name as units, so a long
+  // name moves to its own line instead of breaking in the middle.
+  $$(".person").forEach((el) => {
+    const m = el.textContent.match(/^(\S{1,6}\.)\s+(.+)$/);
+    if (!m) return;
+    el.textContent = "";
+    [m[1], m[2]].forEach((part, i) => {
+      const span = document.createElement("span");
+      span.textContent = part;
+      el.append(span);
+      if (i === 0) el.append(" ");
+    });
+  });
+
   document.title = `Thiệp cưới ${W.groom.name} & ${W.bride.name}`;
 
   // Cover + desktop backdrop

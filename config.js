@@ -21,8 +21,8 @@ window.WEDDING = {
     address: "Hà Nội",
   },
   brideFamily: {
-    father: "Ông. Hồng Minh",
-    mother: "Bà. Mai Hương",
+    father: "Ông. Nguyễn Bội Hồng Minh",
+    mother: "Bà. Nguyễn Mai Hương",
     address: "Hà Nội",
   },
 
