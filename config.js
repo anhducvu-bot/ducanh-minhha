@@ -76,7 +76,7 @@ window.WEDDING = {
 
   // Google Sheet connection for the RSVP form.
   // Paste your Google Apps Script Web App URL here (see README). "" = not connected yet.
-  sheetEndpoint: "",
+  sheetEndpoint: "https://script.google.com/macros/s/AKfycbz-mYpp_JBeA7AaNcBh4NfBQWyNxN2PI3RR2CNFuECvkCGD0WHAFZsFCCdfhg46Gafb/exec",
 
   rsvp: true, // false = hide the RSVP section
 
