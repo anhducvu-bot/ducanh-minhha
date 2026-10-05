@@ -376,6 +376,29 @@ body.game-open { overflow: hidden; }
 }
 .gp-goal { color: #ffd75a; font-family: "Noto Serif SC", "Songti SC", serif; font-size: 22px; }
 .game-stage { position: relative; }
+.game-sub { width: min(100%, 760px); padding: 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 19px; }
+.hud-tray { display: flex; gap: 5px; }
+.hud-tray img {
+  width: 22px; height: 22px; image-rendering: pixelated; opacity: .28; filter: grayscale(1);
+  transition: opacity .3s, filter .3s, transform .3s;
+}
+.hud-tray img.got { opacity: 1; filter: none; transform: scale(1.15); }
+.hud-clock { color: #ffd75a; white-space: nowrap; }
+.hud-clock.late { color: #ff9c8f; }
+.game-bubbles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.gbubble {
+  position: absolute; left: 0; top: 0; white-space: nowrap; will-change: transform;
+  background: #fff8ee; color: #2a1410; border: 2px solid #2a1410; box-shadow: 2px 2px 0 rgba(0,0,0,.25);
+  padding: 0 6px 1px; font-size: 17px; line-height: 1.1;
+}
+.gbubble::after {
+  content: ""; position: absolute; left: 50%; bottom: -8px; margin-left: -4px;
+  border: 4px solid transparent; border-top-color: #2a1410;
+}
+.gbubble.label { background: none; border: 0; box-shadow: none; color: #ffd75a; font-size: 19px; text-shadow: 2px 2px 0 #2a1410, -1px -1px 0 #2a1410, 1px -1px 0 #2a1410, -1px 1px 0 #2a1410; }
+.gbubble.zone { background: rgba(42, 20, 16, .78); color: #ffd75a; border-color: #e8b84a; font-size: 24px; padding: 2px 12px; }
+.gbubble.label::after, .gbubble.zone::after { display: none; }
+.game-msg.light { background: none; justify-content: flex-start; padding-top: 10px; }
 #gameCanvas {
   display: block; image-rendering: pixelated; image-rendering: crisp-edges;
   outline: 3px solid #e8b84a; outline-offset: 0;
