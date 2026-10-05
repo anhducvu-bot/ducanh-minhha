@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Thiệp Cưới</title>
+  <meta name="description" content="Trân trọng kính mời bạn đến dự lễ cưới của chúng tôi." />
+  <meta property="og:title" content="Thiệp Cưới" />
+  <meta property="og:description" content="Trân trọng kính mời bạn đến dự lễ cưới của chúng tôi." />
+  <meta name="theme-color" content="#8e1b1b" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@500;700&family=VT323&display=swap&subset=vietnamese" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="config.js"></script>
+</head>
+<body class="locked">
+  <div class="backdrop" aria-hidden="true"></div>
+
+  <!-- ============ OPENING ENVELOPE ============ -->
+  <div class="opening" id="opening">
+    <div class="opening-card">
+      <div class="hy">囍</div>
+      <p class="opening-label">Thiệp mời cưới</p>
+      <h1 class="script stacked"><span data-bind="groom.name"></span><span class="amp">&amp;</span><span data-bind="bride.name"></span></h1>
+      <p class="opening-guest">Gửi: <strong data-bind="guest"></strong></p>
+      <button class="btn btn-primary" id="openBtn">Mở thiệp</button>
+    </div>
+  </div>
+
+  <main class="card" id="card">
+    <!-- ============ NAV ============ -->
+    <nav class="site-nav" id="siteNav" aria-label="Mục lục">
+      <a href="#thiep-moi">Thiệp mời</a>
+      <a href="#su-kien">Sự kiện</a>
+      <a href="#album">Album</a>
+      <a href="#xac-nhan">Xác nhận</a>
+      <a href="#mini-game">Game</a>
+    </nav>
+
+    <!-- ============ COVER ============ -->
+    <section class="cover" id="thiep-moi" data-nav>
+      <div class="cover-photo"><img id="coverImg" alt="Ảnh cưới" /></div>
+      <div class="cover-text reveal">
+        <p class="eyebrow">Save the date</p>
+        <h1 class="script names stacked">
+          <span data-bind="groom.name"></span>
+          <span class="amp">&amp;</span>
+          <span data-bind="bride.name"></span>
+        </h1>
+        <p class="cover-date" data-bind="dateShort"></p>
+        <p class="cover-countdown" id="coverCountdown" hidden></p>
+      </div>
+    </section>
+
+    <!-- ============ CALENDAR ============ -->
+    <section class="section calendar-section reveal">
+      <svg class="ornament" viewBox="0 0 200 20" aria-hidden="true"><path d="M0 10 H80 M120 10 H200" /><circle cx="100" cy="10" r="4" /><circle cx="88" cy="10" r="2" /><circle cx="112" cy="10" r="2" /></svg>
+      <h2 class="heading" data-bind="monthTitle"></h2>
+      <div class="calendar" id="calendar"></div>
+    </section>
+
+    <!-- ============ FAMILIES ============ -->
+    <section class="section families reveal">
+      <div class="hy small">囍</div>
+      <div class="family-grid">
+        <div class="family">
+          <h3>Nhà Trai</h3>
+          <p data-bind="groomFamily.father"></p>
+          <p data-bind="groomFamily.mother"></p>
+          <p class="muted" data-bind="groomFamily.address"></p>
+        </div>
+        <div class="family">
+          <h3>Nhà Gái</h3>
+          <p data-bind="brideFamily.father"></p>
+          <p data-bind="brideFamily.mother"></p>
+          <p class="muted" data-bind="brideFamily.address"></p>
+        </div>
+      </div>
+      <p class="announce">Trân trọng báo tin lễ thành hôn của con chúng tôi</p>
+      <div class="couple-row">
+        <div><p class="role">Chú rể</p><p class="script couple-name" data-bind="groom.name"></p></div>
+        <div class="amp script">&amp;</div>
+        <div><p class="role">Cô dâu</p><p class="script couple-name" data-bind="bride.name"></p></div>
+      </div>
+    </section>
+
+    <!-- ============ INVITATION ============ -->
+    <section class="section invite reveal" id="su-kien" data-nav>
+      <p class="eyebrow">Trân trọng kính mời</p>
+      <p class="guest-name" data-bind="guest"></p>
+      <p>đến dự bữa tiệc mừng lễ thành hôn của chúng tôi</p>
+      <p class="invite-time">tổ chức vào lúc <strong data-bind="time"></strong>, <strong data-bind="weekday"></strong></p>
+      <div class="date-block">
+        <div class="date-side" data-bind="monthLabel"></div>
+        <div class="date-day" data-bind="day"></div>
+        <div class="date-side" data-bind="yearLabel"></div>
+      </div>
+      <p class="muted italic" data-bind="lunarDate"></p>
+      <div class="venue">
+        <p class="venue-name" data-bind="venue.name"></p>
+        <p data-bind="venue.hall"></p>
+        <p class="muted" data-bind="venue.address"></p>
+        <a class="btn btn-outline" id="mapBtn" target="_blank" rel="noopener">Chỉ đường</a>
+        <iframe id="mapEmbed" class="map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Bản đồ" hidden></iframe>
+      </div>
+    </section>
+
+    <!-- ============ TIMELINE ============ -->
+    <section class="section timeline-section reveal">
+      <h2 class="heading">Lịch trình</h2>
+      <ol class="timeline" id="timeline"></ol>
+    </section>
+
+    <!-- ============ COUNTDOWN ============ -->
+    <section class="section countdown-section reveal">
+      <h2 class="heading">Đếm ngược</h2>
+      <div class="countdown" id="countdown">
+        <div><span data-unit="d">00</span><small>Ngày</small></div>
+        <div><span data-unit="h">00</span><small>Giờ</small></div>
+        <div><span data-unit="m">00</span><small>Phút</small></div>
+        <div><span data-unit="s">00</span><small>Giây</small></div>
+      </div>
+    </section>
+
+    <!-- ============ GALLERY ============ -->
+    <section class="section gallery-section reveal" id="album" data-nav>
+      <h2 class="heading">Album ảnh cưới</h2>
+      <div class="gallery" id="gallery"></div>
+    </section>
+
+    <!-- ============ RSVP ============ -->
+    <section class="section rsvp-section reveal" id="xac-nhan" data-nav>
+      <h2 class="heading">Xác nhận tham dự</h2>
+      <p class="muted">Hãy xác nhận sự có mặt của quý vị để chúng tôi chuẩn bị đón tiếp chu đáo nhất.</p>
+      <form id="rsvpForm" class="rsvp" novalidate>
+        <label>Tên của bạn
+          <input name="name" required autocomplete="name" />
+        </label>
+        <fieldset>
+          <legend>Bạn sẽ đến chứ?</legend>
+          <label class="choice"><input type="radio" name="attending" value="Có" checked /> Mình chắc chắn sẽ đến</label>
+          <label class="choice"><input type="radio" name="attending" value="Không" /> Xin lỗi, mình bận rồi!</label>
+        </fieldset>
+        <fieldset>
+          <legend>Bạn là khách mời của ai?</legend>
+          <label class="choice"><input type="radio" name="side" value="Nhà trai" checked /> Nhà trai</label>
+          <label class="choice"><input type="radio" name="side" value="Nhà gái" /> Nhà gái</label>
+        </fieldset>
+        <label>Số người tham dự
+          <select name="count">
+            <option>1 người</option><option>2 người</option><option>3 người</option><option>4 người</option><option>Khác</option>
+          </select>
+        </label>
+        <label>Lời chúc
+          <textarea name="message" rows="3" placeholder="Gửi lời chúc đến cô dâu chú rể..."></textarea>
+        </label>
+        <button class="btn btn-primary" type="submit">Gửi xác nhận</button>
+        <p class="form-status" id="rsvpStatus" role="status"></p>
+      </form>
+    </section>
+
+    <!-- ============ MINI GAME ============ -->
+    <section class="section game-section reveal" id="mini-game" data-nav>
+      <p class="eyebrow">Mini game</p>
+      <h2 class="heading">Rước Dâu</h2>
+      <p class="muted">Giúp chú rể <strong data-bind="groom.name"></strong> vượt phố Hà Nội, hạ gục slime để rước cô dâu <strong data-bind="bride.name"></strong>!</p>
+      <canvas class="game-preview" id="gamePreview" width="72" height="40" aria-hidden="true"></canvas>
+      <button class="btn btn-primary" id="playBtn" type="button">Chơi ngay</button>
+      <div class="lb-mini" id="lbMini"></div>
+    </section>
+
+    <!-- ============ THANK YOU ============ -->
+    <section class="section thanks reveal">
+      <div class="hy small">囍</div>
+      <p class="script thanks-title">Thank you!</p>
+      <p data-bind="thankYou"></p>
+      <p class="script signature"><span data-bind="groom.shortName"></span> &amp; <span data-bind="bride.shortName"></span></p>
+    </section>
+  </main>
+
+  <!-- ============ FLOATING CONTROLS (opt-in) ============ -->
+  <div class="fab-group" id="fabs">
+    <button class="fab" id="musicBtn" aria-pressed="false" aria-label="Bật nhạc" title="Bật nhạc">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>
+    </button>
+    <button class="fab" id="heartBtn" aria-pressed="false" aria-label="Thả tim" title="Thả tim (giữ để thả nhiều)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 6 3.8 4.5 7.3C19.5 16.4 12 21 12 21z" /></svg>
+    </button>
+  </div>
+  <div class="hearts-layer" id="heartsLayer" aria-hidden="true"></div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <!-- ============ MINI GAME OVERLAY ============ -->
+  <div class="game-overlay" id="game" hidden>
+    <div class="game-top">
+      <button class="game-close" id="gameClose" type="button" aria-label="Đóng game">✕</button>
+      <div class="game-stats">
+        <span>❤ <b id="hudHearts">0</b></span>
+        <span>🧧 <b id="hudLixi">0</b></span>
+        <span>Điểm <b id="hudScore">0</b></span>
+      </div>
+    </div>
+    <div class="game-progress" aria-hidden="true">
+      <div class="gp-track"><div class="gp-fill" id="hudBar"></div><div class="gp-groom" id="hudGroom"></div></div>
+      <span class="gp-goal">囍</span>
+    </div>
+    <div class="game-stage">
+      <canvas id="gameCanvas" width="195" height="150"></canvas>
+      <div class="game-msg" id="gameMsg" hidden></div>
+    </div>
+    <p class="game-hint">Chạm bất kỳ đâu để nhảy</p>
+    <div class="game-result" id="gameResult" hidden></div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lb-close" aria-label="Đóng">×</button>
+    <button class="lb-nav lb-prev" aria-label="Ảnh trước">‹</button>
+    <img alt="" />
+    <button class="lb-nav lb-next" aria-label="Ảnh sau">›</button>
+  </div>
+
+  <audio id="bgMusic" loop preload="none"></audio>
+
+  <script src="js/main.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/rsvp.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/nav.js"></script>
+</body>
+</html>
