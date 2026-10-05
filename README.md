@@ -54,6 +54,12 @@ Scoring: slime +100 · heart +20 · lì xì +50 · hit −50 · reaching the bri
 2. Go to **Settings → Pages → Build and deployment**, set Source to **Deploy from a branch**, and choose Branch **main**, folder **/ (root)**.
 3. Your site will be live at `https://anhducvu-bot.github.io/ducanh-minhha/` after a minute or two.
 
+**After changing config.js, CSS or JS:** bump the `?v=…` number on those files in `index.html` (any new number works). Otherwise phones may keep showing an old saved copy:
+
+```bash
+V=$(date +%Y%m%d%H%M); sed -i '' -E "s/\?v=[0-9]+/?v=$V/g" index.html
+```
+
 ## Files
 
 ```
