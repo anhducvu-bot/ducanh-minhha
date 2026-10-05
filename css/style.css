@@ -275,7 +275,6 @@ body.locked .site-nav { transform: translateY(-100%); }
 
 /* ---------- Thanks ---------- */
 .thanks-title { font-size: 3rem; color: var(--red); line-height: 1.1; margin-bottom: 10px; }
-.signature { font-size: 2rem; color: var(--gold); margin-top: 18px; }
 
 /* ---------- Floating buttons ---------- */
 .fab-group {

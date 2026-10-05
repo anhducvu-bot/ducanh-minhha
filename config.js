@@ -7,11 +7,9 @@
 window.WEDDING = {
   groom: {
     name: "Đức Anh",            // shown in script font
-    shortName: "Đức Anh",
   },
   bride: {
     name: "Minh Hà",
-    shortName: "Minh Hà",
   },
 
   // Parents — shown in the "Nhà Trai / Nhà Gái" section
