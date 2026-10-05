@@ -794,13 +794,13 @@
   // ---------- Course ----------
   // Fixed spots for the special things; each is moved into the nearest free gap between obstacles.
   const SPECIALS = [
-    { type: "friend", x: 520 }, { type: "power", kind: "nonla", x: 760 },
+    { type: "friend", x: 520 },
     { type: "item", kind: "traucau", x: 1000 },
     { type: "friend", x: 1350 }, { type: "power", kind: "grab", x: 1620 },
     { type: "item", kind: "banhcom", x: 1850, high: true },
     { type: "friend", x: 2450 }, { type: "item", kind: "ruou", x: 2800 },
     { type: "item", kind: "che", x: 3450, high: true },
-    { type: "friend", x: 3950 }, { type: "power", kind: "nonla", x: 4400 },
+    { type: "friend", x: 3950 },
     { type: "item", kind: "hoaqua", x: 4800 }, { type: "friend", x: 5150 },
   ];
   const CAMEOS = [
@@ -961,7 +961,7 @@
     stats = { slimes: 0, hearts: 0, lixi: 0, hits: 0, items: [], friends: 0 };
     invuln = 0; speedMul = 1; jumpBuffer = 0; walkX = PX;
     followers = 0; yHist = [];
-    power = { ride: 0, shield: false };
+    power = { ride: 0 };
     zoneShown = -1; train = null; trainDone = false;
     gate = { phase: "", t: 0, paid: 0, meter: 0, alpha: 1, bonus: "", nextPay: 0, lastTalk: 0, readUntil: 0 };
     clearDialog(); setHint("");
@@ -1146,8 +1146,7 @@
         case "power":
           if (!hit(box, { x: e.x, y: e.y, w: 8, h: 8 })) break;
           e.done = true;
-          if (e.kind === "nonla") { power.shield = true; say("Có nón lá che rồi!", { follow: "groom", life: 1.5 }); }
-          else if (e.kind === "grab") { power.ride = 5; say("Grab đây! 🛵", { follow: "groom", life: 1.5 }); }
+          power.ride = 5; say("Grab đây! 🛵", { follow: "groom", life: 1.5 });
           burst(e.x + 4, e.y + 4, ["#ffffff", "#ffd75a"], 10, 30);
           break;
         case "friend":
@@ -1185,12 +1184,6 @@
 
   function takeHit(e) {
     e.hitOnce = true;
-    if (power.shield) {
-      power.shield = false; invuln = 0.8;
-      say("Hú hồn! Nón lá đỡ rồi 😅", { follow: "groom", life: 1.4 });
-      fx.push({ x: cam + playerX() + 2, y: pl.y - 18, vx: -40, vy: -60, life: 0.9, g: 120, hat: true });
-      return;
-    }
     stats.hits++;
     invuln = 1.2;
     speedMul = 0.45;
@@ -1271,8 +1264,7 @@
         case "power": {
           const y = Math.round(e.y + Math.sin(t * 4 + e.x) * 1.5);
           ctx.globalAlpha = 0.35; disc(x + 4, y + 3, 6, "#ffffff"); ctx.globalAlpha = 1;
-          if (e.kind === "nonla") ctx.drawImage(SPR.nonla, x - 2, y + 1);
-          else ctx.drawImage(SPR.helmet, x, y);
+          ctx.drawImage(SPR.helmet, x, y);
           break;
         }
         case "friend": {
@@ -1337,7 +1329,6 @@
           ctx.drawImage(SPR.helmet, px + 2, gy - 4);
         } else ctx.drawImage(spr, px, gy);
       } else ctx.drawImage(spr, px, gy);
-      if (power.shield && power.ride <= 0) ctx.drawImage(SPR.nonla, px, gy - 3);
     }
 
     // big heart above the couple
@@ -1360,7 +1351,6 @@
       }
       const x = Math.round(p.x - cam), y = Math.round(p.y);
       if (p.heart) { ctx.globalAlpha = Math.min(1, p.life); ctx.drawImage(SPR.heart, x, y); ctx.globalAlpha = 1; }
-      else if (p.hat) ctx.drawImage(SPR.nonla, x, y);
       else R(x, y, 1, 1, p.c);
     }
     for (const a of ambient) R(Math.round(a.x + Math.sin(t * 3 + a.ph) * 2), Math.round(a.y), a.s, a.s, a.c);

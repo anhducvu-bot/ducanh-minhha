@@ -48,7 +48,7 @@ A pixel wedding procession through Hà Nội: **Phố cổ → Hồ Gươm → P
 - **Obstacles:** trà đá stools, motorbikes loaded with a fridge, chicken cages or a peach-blossom tree, phở carts, xích lô, gánh hàng rong, road works and flower bicycles. Slimes ("Kẹt xe", "Mưa phùn", "Ma Nồm") are defeated by landing on them.
 - **Mâm quả:** collect the 5 lễ vật (trầu cau, bánh cốm, rượu, chè, hoa quả) for "Đủ lễ!".
 - **Đoàn nhà trai:** groomsmen waiting on the street join the procession behind the groom.
-- **Power-ups:** nón lá (blocks one hit) and Grab helmet (5 s unstoppable motorbike ride).
+- **Power-up:** the Grab helmet gives a 5 s unstoppable motorbike ride.
 - **Chặn cổng:** the bride's cousins ask for 3 lì xì. Without enough, tap quickly to "nịnh" your way in.
 - **Atmosphere:** hoa sữa petals, lá bàng, a train rushing past, aunties cheering, and the groom's friends Quyền, Hà Minh and Thắng along the way ("LFGGG! 🔥", "Cố lên homie!", "Bá khí thật!").
 
