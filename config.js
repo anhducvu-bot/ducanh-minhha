@@ -64,12 +64,14 @@ window.WEDDING = {
     "assets/photos/5.jpeg",
   ],
 
-  // Background music — only plays when the guest taps the music button.
-  // YouTube:  { youtube: "<link>", start: <seconds> }
-  // MP3 file: { file: "assets/music/song.mp3", start: <seconds> }   ·   "" = hide the button
+  // Background music. With autoplay: true it starts when the guest taps "Mở thiệp";
+  // the music button stops / restarts it.
+  // YouTube:  { youtube: "<link>", start: <seconds>, autoplay: true }
+  // MP3 file: { file: "assets/music/song.mp3", start: <seconds>, autoplay: true }   ·   "" = no music
   music: {
-    youtube: "https://www.youtube.com/watch?v=l_uzEREOKfo", // Thế Giới Của Anh
-    start: 60,
+    youtube: "https://www.youtube.com/watch?v=y24y3lh8Uw8", // Tặng vịu ơ Minh Hà
+    start: 0,
+    autoplay: true,
   },
 
   // Google Sheet connection — used by BOTH the RSVP form and the game leaderboard.

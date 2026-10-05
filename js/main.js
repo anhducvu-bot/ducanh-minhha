@@ -51,6 +51,20 @@
   const cover = W.coverPhoto || W.photos[0];
   $("#coverImg").src = cover;
   if (W.coverText === "bottom") $(".cover").classList.add("text-bottom");
+
+  // Lock the cover to the screen height measured when the page opens. iPhone
+  // Safari changes the viewport height while its toolbar shrinks on scroll, which
+  // made a viewport-sized cover (and its photo) grow. Only re-measure when the
+  // width changes (e.g. the phone is rotated), never on height-only changes.
+  let coverW = 0;
+  function lockCoverHeight() {
+    if (window.innerWidth === coverW) return;
+    coverW = window.innerWidth;
+    const h = Math.min(920, Math.max(520, window.innerHeight - 46));
+    document.documentElement.style.setProperty("--cover-h", h + "px");
+  }
+  lockCoverHeight();
+  window.addEventListener("resize", lockCoverHeight);
   document.documentElement.style.setProperty("--backdrop-img", `url("${cover}")`);
 
   // Map

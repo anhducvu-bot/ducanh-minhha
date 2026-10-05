@@ -1,4 +1,7 @@
-/* Opt-in effects: music toggle + hearts. Nothing happens until the guest taps a button. */
+/* Music + hearts.
+   - Tapping "Mở thiệp" sends up a wave of hearts and, if config.music.autoplay is on,
+     starts the music (that tap is what lets phones play sound).
+   - The music button stops / restarts it; the heart button sends more hearts. */
 (function () {
   const W = window.WEDDING;
   const audio = document.getElementById("bgMusic");
@@ -7,7 +10,7 @@
   const layer = document.getElementById("heartsLayer");
 
   // ---------- Music ----------
-  // config.music can be:  "path.mp3"  |  { file, start }  |  { youtube, start }
+  // config.music can be:  "path.mp3"  |  { file, start, autoplay }  |  { youtube, start, autoplay }
   const music = typeof W.music === "string" ? { file: W.music } : W.music || {};
   const start = Number(music.start) || 0;
   const setPlaying = (on) => {
@@ -21,31 +24,52 @@
     console.warn("Music failed to play:", err);
   };
 
-  if (music.youtube) {
-    setupYouTube(youtubeId(music.youtube));
-  } else if (music.file) {
-    setupAudioFile(music.file);
-  } else {
-    musicBtn.hidden = true;
+  // Each player exposes: play(quiet), pause(), playing(), audible()
+  let player = null;
+  if (music.youtube) player = setupYouTube(youtubeId(music.youtube));
+  else if (music.file) player = setupAudioFile(music.file);
+  else musicBtn.hidden = true;
+
+  let userPaused = false;
+  if (player) {
+    musicBtn.addEventListener("click", () => {
+      if (player.playing()) { userPaused = true; player.pause(); }
+      else { userPaused = false; player.play(); }
+    });
   }
+
+  // "Mở thiệp": welcome hearts + start the music
+  document.getElementById("openBtn").addEventListener("click", () => {
+    burst(24);
+    setTimeout(() => burst(16), 900);
+    if (!player || !music.autoplay) return;
+    player.play(true);
+    // If the phone blocked it (e.g. the player was still loading), try once more
+    // on the guest's next tap — unless they've already used the music button.
+    const retry = (e) => {
+      ["click", "touchend"].forEach((t) => document.removeEventListener(t, retry, true));
+      if (e.target.closest && e.target.closest("#musicBtn")) return;
+      if (!userPaused && !player.audible()) player.play(true);
+    };
+    setTimeout(() => ["click", "touchend"].forEach((t) => document.addEventListener(t, retry, true)), 0);
+  });
 
   function setupAudioFile(src) {
     audio.src = src;
     let started = false;
-    musicBtn.addEventListener("click", async () => {
-      if (audio.paused) {
-        try {
-          if (!started && start) audio.currentTime = start;
-          await audio.play();
-          started = true;
-        } catch (err) { fail(err); }
-      } else {
-        audio.pause();
-      }
-    });
     audio.addEventListener("pause", () => setPlaying(false));
     audio.addEventListener("play", () => setPlaying(true));
     audio.addEventListener("ended", () => { audio.currentTime = start; audio.play(); });
+    return {
+      play(quiet) {
+        if (!started && start) audio.currentTime = start;
+        started = true;
+        audio.play().catch((err) => (quiet ? console.warn("Autoplay blocked:", err) : fail(err)));
+      },
+      pause() { audio.pause(); },
+      playing() { return !audio.paused; },
+      audible() { return !audio.paused; },
+    };
   }
 
   function youtubeId(url) {
@@ -53,11 +77,10 @@
     return m ? m[1] : String(url);
   }
 
-  // YouTube IFrame Player API. The player is created up front (hidden) so the
-  // button click can call playVideo() directly — phones require that it happens
-  // inside the tap itself.
+  // YouTube IFrame Player API. The player is created up front (hidden) so a tap
+  // can call playVideo() directly — phones require that it happens inside the tap.
   function setupYouTube(videoId) {
-    let player = null, ready = false, wantPlay = false;
+    let yt = null, ready = false, wantPlay = false;
     const host = document.createElement("div");
     host.className = "yt-host";
     host.innerHTML = '<div id="ytPlayer"></div>';
@@ -66,15 +89,15 @@
     const prev = window.onYouTubeIframeAPIReady;
     window.onYouTubeIframeAPIReady = function () {
       prev && prev();
-      player = new YT.Player("ytPlayer", {
+      yt = new YT.Player("ytPlayer", {
         width: 200, height: 200, videoId,
         playerVars: { start, playsinline: 1, controls: 0, disablekb: 1, rel: 0, origin: location.origin },
         events: {
-          onReady: () => { ready = true; if (wantPlay) player.playVideo(); },
+          onReady: () => { ready = true; if (wantPlay) yt.playVideo(); },
           onStateChange: (e) => {
             if (e.data === YT.PlayerState.PLAYING) setPlaying(true);
             else if (e.data === YT.PlayerState.PAUSED) setPlaying(false);
-            else if (e.data === YT.PlayerState.ENDED) { player.seekTo(start, true); player.playVideo(); }
+            else if (e.data === YT.PlayerState.ENDED) { yt.seekTo(start, true); yt.playVideo(); }
           },
           onError: (e) => fail("YouTube error " + e.data),
         },
@@ -85,17 +108,13 @@
     s.onerror = () => fail("Could not load YouTube");
     document.head.appendChild(s);
 
-    musicBtn.addEventListener("click", () => {
-      if (!ready) {
-        // API still loading — start as soon as it's ready
-        wantPlay = !wantPlay;
-        setPlaying(wantPlay);
-        return;
-      }
-      const st = player.getPlayerState();
-      if (st === YT.PlayerState.PLAYING || st === YT.PlayerState.BUFFERING) player.pauseVideo();
-      else player.playVideo();
-    });
+    const state = () => (ready ? yt.getPlayerState() : -1);
+    return {
+      play() { wantPlay = true; if (ready) yt.playVideo(); else setPlaying(true); },
+      pause() { wantPlay = false; if (ready) yt.pauseVideo(); setPlaying(false); },
+      playing() { return ready ? [YT.PlayerState.PLAYING, YT.PlayerState.BUFFERING].includes(state()) : wantPlay; },
+      audible() { return ready && state() === YT.PlayerState.PLAYING; },
+    };
   }
 
   // ---------- Hearts ----------
