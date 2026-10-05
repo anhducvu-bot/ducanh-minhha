@@ -909,7 +909,6 @@
   function speakers() {
     return SPEAKERS || (SPEAKERS = {
       groom: { name: W.groom.name, face: faceURL(SPR.runB) },
-      bride: { name: W.bride.name, face: faceURL(SPR.bride) },
       friend: { name: "Anh em bê tráp", face: faceURL(SPR.friendA) },
       cousin: { name: "Chị em nhà gái", face: faceURL(SPR.cousin) },
       auntie: { name: "Cô bán trà đá", face: faceURL(SPR.auntie) },
@@ -1065,7 +1064,7 @@
       walkX = Math.min(gx + MEET_X, walkX + 50 * dt);
       if (walkX >= gx + MEET_X && pl.onGround) {
         state = "celebrate"; celebT = 0;
-        talk("bride", "Anh đến rồi! 💕", { now: true });
+        clearDialog(); // keep the night sky and fireworks clear
       }
     } else if (state === "celebrate" || state === "done") {
       celebT += dt; hopT += dt;
