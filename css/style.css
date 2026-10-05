@@ -376,15 +376,13 @@ body.game-open { overflow: hidden; }
 }
 .gp-goal { color: #ffd75a; font-family: "Noto Serif SC", "Songti SC", serif; font-size: 22px; }
 .game-stage { position: relative; }
-.game-sub { width: min(100%, 760px); padding: 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 19px; }
+.game-sub { width: min(100%, 760px); padding: 0 12px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 19px; }
 .hud-tray { display: flex; gap: 5px; }
 .hud-tray img {
   width: 22px; height: 22px; image-rendering: pixelated; opacity: .28; filter: grayscale(1);
   transition: opacity .3s, filter .3s, transform .3s;
 }
 .hud-tray img.got { opacity: 1; filter: none; transform: scale(1.15); }
-.hud-clock { color: #ffd75a; white-space: nowrap; }
-.hud-clock.late { color: #ff9c8f; }
 .game-bubbles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .gbubble {
   position: absolute; left: 0; top: 0; white-space: nowrap; will-change: transform;

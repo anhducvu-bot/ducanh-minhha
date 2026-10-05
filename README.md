@@ -48,8 +48,7 @@ A pixel wedding procession through Hà Nội: **Phố cổ → Hồ Gươm → P
 - **Obstacles:** trà đá stools, motorbikes loaded with a fridge, chicken cages or a peach-blossom tree, phở carts, xích lô, gánh hàng rong, road works, puddles and flower bicycles. Slimes ("Kẹt xe", "Mưa phùn", "Ma Nồm") are defeated by landing on them.
 - **Mâm quả:** collect the 5 lễ vật (trầu cau, bánh cốm, rượu, chè, hoa quả) for "Đủ lễ!".
 - **Đoàn nhà trai:** groomsmen waiting on the street join the procession behind the groom.
-- **Power-ups:** nón lá (blocks one hit), Grab helmet (5 s unstoppable motorbike ride), cà phê trứng (slow motion).
-- **Giờ đẹp:** the clock starts 60 minutes before the wedding time (1 second = 1 minute); arrive before it for a bonus.
+- **Power-ups:** nón lá (blocks one hit) and Grab helmet (5 s unstoppable motorbike ride).
 - **Chặn cổng:** the bride's cousins ask for 3 lì xì. Without enough, tap quickly to "nịnh" your way in.
 - **Atmosphere:** hoa sữa petals, lá bàng, a train rushing past and aunties cheering.
 

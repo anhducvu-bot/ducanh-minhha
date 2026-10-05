@@ -2,7 +2,7 @@
    Phố cổ → Hồ Gươm → Phố đường tàu → the bride's "Vu Quy" gate.
    Tap to jump (tap again in the air for a double jump). Land on slimes to
    defeat them, collect the 5 lễ vật of the mâm quả, pick up groomsmen,
-   save lì xì for the cousins guarding the gate, and arrive before "giờ đẹp". */
+   and save lì xì for the cousins guarding the gate. */
 (function () {
   const W = window.WEDDING;
   const cfg = W.game === true ? { enabled: true } : W.game || {};
@@ -14,7 +14,7 @@
   const msgEl = $("gameMsg"), resultEl = $("gameResult"), bubbleLayer = $("gameBubbles");
   const hud = {
     score: $("hudScore"), hearts: $("hudHearts"), lixi: $("hudLixi"), bar: $("hudBar"),
-    groom: $("hudGroom"), tray: $("hudTray"), clock: $("hudClock"),
+    groom: $("hudGroom"), tray: $("hudTray"),
   };
 
   // ---------- Tunables ----------
@@ -31,16 +31,13 @@
   const MID = 0.55, FAR = 0.25;     // parallax factors
   const SEED = 20261128;            // fixed course: same for everyone
   const LIXI_NEEDED = 3;            // lì xì the cousins ask for at the gate
-  const CLOCK_LEAD = 60;            // the run starts this many minutes before giờ đẹp (1 s = 1 min)
   const TRAIN_X = 4250;             // where the train rushes past on Phố đường tàu
   const MAX_FRIENDS = 5;
   const PTS = {
     slime: 100, heart: 20, lixi: 50, item: 100, fullSet: 500, friend: 50, hit: -50,
-    finish: 1000, perfect: 500, onTime: 300, gateLixi: 200, gateFlatter: 100,
+    finish: 1000, perfect: 500, gateLixi: 200, gateFlatter: 100,
   };
 
-  const wedding = new Date(W.date);
-  const TARGET_MIN = wedding.getHours() * 60 + wedding.getMinutes();
 
   // ---------- Palette & sprites ----------
   const PAL = {
@@ -191,7 +188,6 @@
   const BWHEEL = ["..kkkk..", ".k....k.", "k......k", "k..kk..k", "k..kk..k", "k......k", ".k....k.", "..kkkk.."];
   const NONLA = [".....kk.....", "....kttk....", "...kttttk...", "..kTttttTk..", ".kkkkkkkkkk."];
   const HELMET = ["..kkkk..", ".kGGGGk.", "kGGWGGGk", "kGGGGGGk", "kkkkkkkk"];
-  const CAPHE = [".kkkkk.", "kzzzzzk", "kyzyzyk", "kbbbbbk", "kbbbbbk", ".kbbbk.", "..kkk.."];
   const ITEMS = {
     traucau: { name: "Trầu cau", rows: ["...ff...", "..fFFf..", ".fFffFf.", "fFffffFf", ".fFffFf.", "..kbbk..", ".kbBBbk.", "..kkkk.."] },
     banhcom: { name: "Bánh cốm", rows: ["kkkkkkkk", "kffrrffk", "kffrrffk", "krrrrrrk", "krrrrrrk", "kffrrffk", "kffrrffk", "kkkkkkkk"] },
@@ -239,7 +235,6 @@
     bwheel: makeSprite(BWHEEL),
     nonla: makeSprite(NONLA),
     helmet: makeSprite(HELMET),
-    caphe: makeSprite(CAPHE),
     items: Object.fromEntries(ITEM_ORDER.map((k) => [k, makeSprite(ITEMS[k].rows)])),
     hy: makeSprite(HY, { "#": "#c8323a" }),
   };
@@ -804,7 +799,7 @@
     { type: "friend", x: 1350 }, { type: "power", kind: "grab", x: 1620 },
     { type: "item", kind: "banhcom", x: 1850, high: true },
     { type: "friend", x: 2450 }, { type: "item", kind: "ruou", x: 2800 },
-    { type: "power", kind: "caphe", x: 3150 }, { type: "item", kind: "che", x: 3450, high: true },
+    { type: "item", kind: "che", x: 3450, high: true },
     { type: "friend", x: 3950 }, { type: "power", kind: "nonla", x: 4400 },
     { type: "item", kind: "hoaqua", x: 4800 }, { type: "friend", x: 5150 },
   ];
@@ -951,7 +946,7 @@
   let VW = 195;
   let state = "closed", t = 0, cam = 0, camStop = 0, last = 0, raf = 0;
   let pl, ents, fx, popups, ambient, stats, invuln, speedMul, jumpBuffer, walkX, runTime;
-  let followers, yHist, power, zoneShown, train, trainDone, gate, celebT, hopT, nextFirework, arriveClock;
+  let followers, yHist, power, zoneShown, train, trainDone, gate, celebT, hopT, nextFirework;
   let hudCache = "";
 
   function reset() {
@@ -963,11 +958,11 @@
     stats = { slimes: 0, hearts: 0, lixi: 0, hits: 0, items: [], friends: 0 };
     invuln = 0; speedMul = 1; jumpBuffer = 0; walkX = PX;
     followers = 0; yHist = [];
-    power = { ride: 0, slow: 0, shield: false };
+    power = { ride: 0, shield: false };
     zoneShown = -1; train = null; trainDone = false;
     gate = { phase: "", t: 0, paid: 0, meter: 0, alpha: 1, bonus: "", nextPay: 0, lastTalk: 0, readUntil: 0 };
     clearDialog(); setHint("");
-    celebT = 0; hopT = 0; nextFirework = 0; arriveClock = 0; night = 0; hudCache = "";
+    celebT = 0; hopT = 0; nextFirework = 0; night = 0; hudCache = "";
     hud.tray.querySelectorAll("img").forEach((i) => i.classList.remove("got"));
     updateHud();
   }
@@ -976,20 +971,14 @@
     stats.slimes * PTS.slime + stats.hearts * PTS.heart + stats.lixi * PTS.lixi + stats.items.length * PTS.item +
     (stats.items.length === ITEM_ORDER.length ? PTS.fullSet : 0) + stats.friends * PTS.friend + stats.hits * PTS.hit;
 
-  const clockNow = () => TARGET_MIN - CLOCK_LEAD + runTime;
-  const fmtClock = (m) => { m = Math.floor(m); return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; };
-
   function updateHud() {
-    const clock = state === "run" || state === "idle" || state === "paused" ? clockNow() : arriveClock || clockNow();
     const prog = Math.min(1, Math.max(0, (cam + PX) / (COURSE - VW * 0.42 + 7 + PX)));
-    const key = [Math.max(0, liveScore()), stats.hearts, stats.lixi, Math.floor(clock), Math.round(prog * 200)].join("|");
+    const key = [Math.max(0, liveScore()), stats.hearts, stats.lixi, Math.round(prog * 200)].join("|");
     if (key === hudCache) return;
     hudCache = key;
     hud.score.textContent = Math.max(0, liveScore());
     hud.hearts.textContent = stats.hearts;
     hud.lixi.textContent = stats.lixi;
-    hud.clock.textContent = `⏰ ${fmtClock(clock)} · giờ đẹp ${fmtClock(TARGET_MIN)}`;
-    hud.clock.classList.toggle("late", clock > TARGET_MIN);
     hud.bar.style.width = prog * 100 + "%";
     hud.groom.style.left = prog * 100 + "%";
   }
@@ -1026,8 +1015,7 @@
     updateAmbient(rdt);
     if (state === "paused" || state === "idle") return;
     if (power.ride > 0) power.ride -= rdt;
-    if (power.slow > 0) power.slow -= rdt;
-    const dt = rdt * (power.slow > 0 ? 0.6 : 1); // cà phê trứng = slow motion
+    const dt = rdt;
     const gx = COURSE - cam;
 
     if (state === "run") {
@@ -1043,7 +1031,7 @@
       }
       camStop = COURSE + 7 - VW * 0.42;
       if (cam >= camStop) {
-        cam = camStop; state = "arrive"; walkX = PX; arriveClock = clockNow(); power.ride = 0;
+        cam = camStop; state = "arrive"; walkX = PX; power.ride = 0;
         gate.readUntil = talk("cousin", "Lì xì đi rồi mới cho qua! 🧧", { now: true });
       }
     } else if (state === "arrive") {
@@ -1157,7 +1145,6 @@
           e.done = true;
           if (e.kind === "nonla") { power.shield = true; say("Có nón lá che rồi!", { follow: "groom", life: 1.5 }); }
           else if (e.kind === "grab") { power.ride = 5; say("Grab đây! 🛵", { follow: "groom", life: 1.5 }); }
-          else { power.slow = 3.5; say("Cà phê trứng! Tỉnh cả người ☕", { follow: "groom", life: 1.8 }); }
           burst(e.x + 4, e.y + 4, ["#ffffff", "#ffd75a"], 10, 30);
           break;
         case "friend":
@@ -1282,8 +1269,7 @@
           const y = Math.round(e.y + Math.sin(t * 4 + e.x) * 1.5);
           ctx.globalAlpha = 0.35; disc(x + 4, y + 3, 6, "#ffffff"); ctx.globalAlpha = 1;
           if (e.kind === "nonla") ctx.drawImage(SPR.nonla, x - 2, y + 1);
-          else ctx.drawImage(e.kind === "grab" ? SPR.helmet : SPR.caphe, x, y);
-          if (e.kind === "caphe") R(x + 3 + Math.round(Math.sin(t * 5)), y - 3, 1, 2, "rgba(255,255,255,.7)");
+          else ctx.drawImage(SPR.helmet, x, y);
           break;
         }
         case "friend": {
@@ -1350,7 +1336,6 @@
       } else ctx.drawImage(spr, px, gy);
       if (power.shield && power.ride <= 0) ctx.drawImage(SPR.nonla, px, gy - 3);
     }
-    if (power.slow > 0) { ctx.globalAlpha = 0.12; R(0, 0, VW, H, "#f2b766"); ctx.globalAlpha = 1; }
 
     // big heart above the couple
     if (state === "celebrate" || state === "done") {
@@ -1411,7 +1396,7 @@
   function setMsg(html, light) { msgEl.innerHTML = html; msgEl.hidden = !html; msgEl.classList.toggle("light", !!light); }
 
   const START_MSG = '<b>Chạm để bắt đầu</b><span>Chạm để nhảy · chạm thêm lần nữa trên không để nhảy cao hơn<br>' +
-    "Nhảy lên slime · gom đủ 5 lễ vật · nhặt lì xì để qua cổng nhà gái · về kịp giờ đẹp!</span>";
+    "Nhảy lên slime · gom đủ 5 lễ vật · nhặt lì xì để qua cổng nhà gái!</span>";
 
   function openGame() {
     overlay.hidden = false;
@@ -1475,8 +1460,6 @@
 
   function bonusRows() {
     const rows = [];
-    const onTime = arriveClock <= TARGET_MIN;
-    rows.push([onTime ? `Kịp giờ đẹp (${fmtClock(arriveClock)})` : `Lỡ giờ đẹp (${fmtClock(arriveClock)})`, onTime ? PTS.onTime : 0]);
     rows.push(gate.bonus === "lixi" ? ["Mở cổng bằng lì xì", PTS.gateLixi] : ["Nịnh qua cổng thành công", PTS.gateFlatter]);
     rows.push(["Rước được cô dâu", PTS.finish]);
     if (stats.hits === 0) rows.push(["Không vấp lần nào!", PTS.perfect]);
