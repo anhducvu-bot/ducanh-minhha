@@ -349,9 +349,6 @@ body:not(.locked) .fab-group { opacity: 1; pointer-events: auto; }
   border: 3px solid var(--red); border-radius: 6px; box-shadow: 0 0 0 3px var(--gold-soft);
 }
 .lb-mini { margin-top: 16px; font-family: "VT323", monospace; font-size: 1.25rem; }
-.lb-mini ol { list-style: none; padding: 0; margin: 6px auto 0; max-width: 260px; }
-.lb-mini li, .gr-break li, .gr-lb li { display: flex; justify-content: space-between; gap: 12px; }
-.lb-title { color: var(--red); }
 .lb-best { color: var(--muted); margin-top: 6px; }
 
 body.game-open { overflow: hidden; }
@@ -411,21 +408,9 @@ body.game-open { overflow: hidden; }
 .gr-sub { margin: 2px 0 6px; font-size: 20px; }
 .gr-score { margin: 0; font-size: 64px; line-height: 1; color: #9e1f24; }
 .gr-best { margin: 2px 0 10px; color: #7d6a5c; font-size: 20px; }
+.gr-break li { display: flex; justify-content: space-between; gap: 12px; }
 .gr-break { list-style: none; padding: 10px 0; margin: 0 0 12px; border-top: 2px dashed #e3cf9f; border-bottom: 2px dashed #e3cf9f; font-size: 20px; text-align: left; }
 .gr-break b { font-weight: 400; color: #9e1f24; }
-.gr-save { display: grid; gap: 6px; margin-bottom: 12px; text-align: left; }
-.gr-save label { font-size: 18px; color: #7d6a5c; }
-.gr-save input {
-  font: inherit; font-size: 22px; padding: 6px 10px; border: 3px solid #2a1410; background: #fff; color: #3a2a22; border-radius: 0;
-}
-.gr-lb { text-align: left; margin-bottom: 12px; }
-.gr-lb-title { margin: 0 0 4px; color: #c8323a; text-align: center; }
-.gr-lb ol { list-style: none; padding: 0; margin: 0; font-size: 20px; }
-.gr-lb li { padding: 2px 6px; }
-.gr-lb li:nth-child(odd) { background: #f4ead9; }
-.gr-lb li.me { background: #ffe9a8; }
-.gr-lb li b { font-weight: 400; }
-.gr-lb .muted, .lb-mini .muted { color: #7d6a5c; justify-content: center; text-align: center; }
 .gr-actions { display: flex; gap: 10px; justify-content: center; }
 .gbtn {
   font: inherit; font-size: 22px; padding: 6px 16px; cursor: pointer; border-radius: 0;

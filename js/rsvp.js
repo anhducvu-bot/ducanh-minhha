@@ -27,14 +27,12 @@
     status.textContent = "Đang gửi...";
 
     const data = new FormData(form);
-    data.append("type", "rsvp");
     data.append("guestLink", new URLSearchParams(location.search).get("to") || "");
 
     try {
       // no-cors: Apps Script doesn't return CORS headers; the request still arrives.
       await fetch(W.sheetEndpoint, { method: "POST", mode: "no-cors", body: data });
       form.classList.add("done");
-      try { localStorage.setItem("guestName", name); } catch (_) {} // prefill for the game leaderboard
       status.textContent =
         data.get("attending") === "Có"
           ? "Cảm ơn bạn! Hẹn gặp bạn trong ngày vui 💕"

@@ -6,7 +6,6 @@
   const cfg = W.game === true ? { enabled: true } : W.game || {};
   const section = document.getElementById("mini-game");
   if (!cfg.enabled) { section.hidden = true; return; }
-  const endpoint = cfg.leaderboard === false ? "" : W.sheetEndpoint || "";
 
   const $ = (id) => document.getElementById(id);
   const overlay = $("game"), canvas = $("gameCanvas"), ctx = canvas.getContext("2d");
@@ -19,7 +18,7 @@
   const COURSE = 4800;              // distance to the bride's gate
   const SPEED0 = 82, SPEED1 = 132;  // px/s at start / end
   const GRAV = 800, JUMP = 285, JUMP2 = 235;
-  const SEED = 20261128;            // fixed course → fair leaderboard
+  const SEED = 20261128;            // fixed course: same for everyone
   const PTS = { slime: 100, heart: 20, lixi: 50, hit: -50, finish: 1000, perfect: 500 };
 
   // ---------- Palette & sprites ----------
@@ -695,7 +694,7 @@
     document.body.classList.remove("game-open");
     cancelAnimationFrame(raf);
     state = "closed";
-    refreshMini(true);
+    refreshMini();
   }
 
   function onTap() {
@@ -722,7 +721,7 @@
     if (document.hidden && state === "run") { state = "paused"; setMsg("<b>Tạm dừng</b><span>Chạm để chơi tiếp</span>"); }
   });
 
-  // ---------- Results & leaderboard ----------
+  // ---------- Results ----------
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch (_) { return null; } },
@@ -739,8 +738,6 @@
     const prevBest = Number(store.get("ruocdau_best")) || 0;
     const isBest = score > prevBest;
     if (isBest) store.set("ruocdau_best", score);
-    const guest = new URLSearchParams(location.search).get("to") || "";
-    const defaultName = store.get("guestName") || guest;
     const rows = [
       [`Slime hạ gục × ${stats.slimes}`, stats.slimes * PTS.slime],
       [`Tim × ${stats.hearts}`, stats.hearts * PTS.heart],
@@ -757,16 +754,6 @@
         <p class="gr-score">${score}</p>
         <p class="gr-best">${isBest ? "Kỷ lục mới của bạn!" : "Kỷ lục của bạn: " + prevBest}</p>
         <ul class="gr-break">${rows.map(([l, v]) => `<li><span>${esc(l)}</span><b>${v > 0 ? "+" : ""}${v}</b></li>`).join("")}</ul>
-        ${endpoint ? `
-        <form class="gr-save" id="grSave">
-          <label for="grName">Ghi tên lên bảng xếp hạng (không bắt buộc)</label>
-          <input id="grName" maxlength="24" placeholder="Tên của bạn" value="${esc(defaultName)}" autocomplete="name">
-          <button class="gbtn gbtn-gold" type="submit">Lưu điểm</button>
-        </form>` : ""}
-        <div class="gr-lb">
-          <p class="gr-lb-title">🏆 Bảng xếp hạng</p>
-          <ol id="grList">${endpoint ? "<li class='muted'>Đang tải...</li>" : "<li class='muted'>Bảng xếp hạng sẽ hiện khi thiệp được kết nối Google Sheet.</li>"}</ol>
-        </div>
         <div class="gr-actions">
           <button class="gbtn gbtn-gold" id="grAgain" type="button">Chơi lại</button>
           <button class="gbtn" id="grBack" type="button">Về thiệp</button>
@@ -778,9 +765,6 @@
 
     $("grAgain").onclick = () => { resultEl.hidden = true; reset(); state = "idle"; setMsg("<b>Chạm để bắt đầu</b>"); };
     $("grBack").onclick = closeGame;
-    const form = $("grSave");
-    if (form) form.onsubmit = (e) => { e.preventDefault(); saveScore(form, score); };
-    if (endpoint) loadLeaderboard().then((top) => renderList($("grList"), top));
   }
 
   function dateText() {
@@ -788,64 +772,11 @@
     return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()}`;
   }
 
-  async function saveScore(form, score) {
-    const btn = form.querySelector("button");
-    const name = form.elements.grName.value.trim().slice(0, 24) || "Khách bí ẩn";
-    btn.disabled = true; btn.textContent = "Đang lưu...";
-    const data = new FormData();
-    Object.entries({ type: "score", name, score, slimes: stats.slimes, hearts: stats.hearts, lixi: stats.lixi, hits: stats.hits, time: Math.round(runTime) })
-      .forEach(([k, v]) => data.append(k, v));
-    try {
-      await fetch(endpoint, { method: "POST", mode: "no-cors", body: data });
-      if (name !== "Khách bí ẩn") store.set("guestName", name);
-      btn.textContent = "Đã lưu ✓";
-      const top = await loadLeaderboard();
-      // show our score right away even if the sheet hasn't caught up yet
-      if (!top.some((r) => r.name.toLowerCase() === name.toLowerCase() && r.score >= score)) {
-        top.push({ name, score, me: true });
-        top.sort((a, b) => b.score - a.score);
-      }
-      renderList($("grList"), top.slice(0, 10), name);
-    } catch (err) {
-      console.warn(err);
-      btn.disabled = false; btn.textContent = "Thử lại";
-    }
-  }
-
-  async function loadLeaderboard() {
-    try {
-      const res = await fetch(endpoint + (endpoint.includes("?") ? "&" : "?") + "action=leaderboard&t=" + Date.now());
-      const json = await res.json();
-      return Array.isArray(json.top) ? json.top : [];
-    } catch (err) {
-      console.warn("Leaderboard unavailable", err);
-      return [];
-    }
-  }
-
-  function renderList(ol, top, me) {
-    if (!ol) return;
-    if (!top.length) { ol.innerHTML = "<li class='muted'>Chưa có ai — hãy là người đầu tiên!</li>"; return; }
-    const medals = ["🥇", "🥈", "🥉"];
-    ol.innerHTML = top.map((r, i) =>
-      `<li class="${me && r.name.toLowerCase() === me.toLowerCase() ? "me" : ""}"><span>${medals[i] || i + 1 + "."} ${esc(r.name)}</span><b>${Number(r.score) || 0}</b></li>`
-    ).join("");
-  }
-
-  // ---------- Invitation card: preview + mini leaderboard ----------
+  // ---------- Invitation card: preview + personal best ----------
   const mini = $("lbMini");
-  let miniFetched = 0;
-  function refreshMini(force) {
+  function refreshMini() {
     const best = Number(store.get("ruocdau_best")) || 0;
-    const bestLine = best ? `<p class="lb-best">Kỷ lục của bạn: <b>${best}</b></p>` : "";
-    if (!endpoint) { mini.innerHTML = bestLine; return; }
-    if (!force && Date.now() - miniFetched < 30000) return;
-    miniFetched = Date.now();
-    loadLeaderboard().then((top) => {
-      mini.innerHTML = top.length
-        ? `<p class="lb-title">🏆 Top người chơi</p><ol>${top.slice(0, 3).map((r, i) => `<li><span>${["🥇", "🥈", "🥉"][i]} ${esc(r.name)}</span><b>${Number(r.score) || 0}</b></li>`).join("")}</ol>${bestLine}`
-        : bestLine;
-    });
+    mini.innerHTML = best ? `<p class="lb-best">Kỷ lục của bạn: <b>${best}</b></p>` : "";
   }
 
   const pv = $("gamePreview"), pctx = pv.getContext("2d");

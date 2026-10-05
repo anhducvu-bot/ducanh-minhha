@@ -74,7 +74,7 @@ window.WEDDING = {
     autoplay: true,
   },
 
-  // Google Sheet connection — used by BOTH the RSVP form and the game leaderboard.
+  // Google Sheet connection for the RSVP form.
   // Paste your Google Apps Script Web App URL here (see README). "" = not connected yet.
   sheetEndpoint: "",
 
@@ -83,7 +83,6 @@ window.WEDDING = {
   // Mini game "Rước Dâu" (pixel runner). false = hide it.
   game: {
     enabled: true,
-    leaderboard: true, // top scores saved to the Google Sheet above
   },
 
   thankYou:
