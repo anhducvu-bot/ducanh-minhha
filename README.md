@@ -45,12 +45,12 @@ If you change the script later, use **Deploy → Manage deployments → Edit →
 
 A pixel wedding procession through Hà Nội: **Phố cổ → Hồ Gươm → Phố đường tàu → the bride's "Vu Quy" gate**. The sky goes from afternoon to sunset to evening along the way. It's tap-only: tap to jump, and tap again in the air to double-jump.
 
-- **Obstacles:** trà đá stools, motorbikes loaded with a fridge, chicken cages or a peach-blossom tree, phở carts, xích lô, gánh hàng rong, road works, puddles and flower bicycles. Slimes ("Kẹt xe", "Mưa phùn", "Ma Nồm") are defeated by landing on them.
+- **Obstacles:** trà đá stools, motorbikes loaded with a fridge, chicken cages or a peach-blossom tree, phở carts, xích lô, gánh hàng rong, road works and flower bicycles. Slimes ("Kẹt xe", "Mưa phùn", "Ma Nồm") are defeated by landing on them.
 - **Mâm quả:** collect the 5 lễ vật (trầu cau, bánh cốm, rượu, chè, hoa quả) for "Đủ lễ!".
 - **Đoàn nhà trai:** groomsmen waiting on the street join the procession behind the groom.
 - **Power-ups:** nón lá (blocks one hit) and Grab helmet (5 s unstoppable motorbike ride).
 - **Chặn cổng:** the bride's cousins ask for 3 lì xì. Without enough, tap quickly to "nịnh" your way in.
-- **Atmosphere:** hoa sữa petals, lá bàng, a train rushing past and aunties cheering.
+- **Atmosphere:** hoa sữa petals, lá bàng, a train rushing past, aunties cheering, and the groom's friends Quyền, Hà Minh and Thắng along the way ("LFGGG! 🔥", "Cố lên homie!", "Bá khí thật!").
 
 Getting hit costs points but never ends the game. The course is the same for everyone, and each player's best score is remembered on their phone. Tunables (course length, zones, points, how many lì xì the cousins want) are at the top of `js/game.js`.
 

@@ -210,6 +210,11 @@
     }));
     return c;
   }
+  const FRIENDS = {
+    quyen: { name: "Quyền", shirt: "#ef7d32", say: "LFGGG! 🔥" },
+    haminh: { name: "Hà Minh", shirt: "#a77fd6", say: "Cố lên homie!" },
+    thang: { name: "Thắng", shirt: "#2fa58a", say: "Bá khí thật!" },
+  };
   const SLIME_KINDS = {
     ketxe: { label: "Kẹt xe!", map: { l: "#f07a5f", L: "#b8463a" } },
     muaphun: { label: "Mưa phùn!", map: { l: "#a9c1d6", L: "#7290ab" } },
@@ -226,7 +231,8 @@
     cousin: makeSprite(COUSIN),
     cousinBlock: makeSprite(COUSIN_BLOCK),
     auntie: makeSprite(AUNTIE),
-    fan: makeSprite(FAN),
+    // Hội bạn thân — same t-shirt pattern, a different color for each friend
+    fans: Object.fromEntries(Object.entries(FRIENDS).map(([k, f]) => [k, makeSprite(FAN, { u: f.shirt })])),
     slimes: Object.fromEntries(Object.entries(SLIME_KINDS).map(([k, v]) => [k, { a: makeSprite(SLIME, v.map), b: makeSprite(SLIME_SQUISH, v.map) }])),
     heart: makeSprite(HEART),
     hoasua: makeSprite(HOASUA),
@@ -305,7 +311,7 @@
   // ---------- Obstacles ----------
   const SIZE = {
     slime: { w: 10, h: 8 }, bike: { w: 24, h: 14 }, pho: { w: 28, h: 17 }, flower: { w: 24, h: 22 },
-    stools: { w: 34, h: 11 }, xichlo: { w: 30, h: 22 }, ganh: { w: 28, h: 12 }, barrier: { w: 22, h: 13 }, puddle: { w: 26, h: 3 },
+    stools: { w: 34, h: 11 }, xichlo: { w: 30, h: 22 }, ganh: { w: 28, h: 12 }, barrier: { w: 22, h: 13 },
   };
   const BIKE_LOAD_H = { nonla: 14, fridge: 27, chicken: 25, dao: 30 };
   const BIKE_COLORS = ["#d23c3c", "#3b7dd8", "#e58a2e", "#3fae8c"];
@@ -444,22 +450,16 @@
     R(x + 4, GY - 3, 3, 3, "#f29b38"); R(x + 5, GY - 5, 1, 2, "#f29b38"); // traffic cone
   }
 
-  function drawPuddle(x, e, t) {
-    R(x + 2, GY - 2, 22, 1, "#6a9fe0"); R(x, GY - 1, 26, 2, "#4a7cc0");
-    R(x + 4, GY - 2, 6, 1, "#bfe0ff");
-    R(x + 13 + Math.round(Math.sin(t * 3) * 3), GY - 1, 3, 1, "#9cc8f5");
-  }
-
   const DRAW = {
     bike: drawBike, pho: drawPho, flower: drawFlower, stools: drawStools,
-    xichlo: drawXichLo, ganh: drawGanh, barrier: drawBarrier, puddle: drawPuddle,
+    xichlo: drawXichLo, ganh: drawGanh, barrier: drawBarrier,
   };
 
   // Obstacle mix per zone: [type, weight, extra]
   const POOLS = [
     [["slime", 30], ["stools", 18], ["bike", 14, "nonla"], ["bike", 8, "fridge"], ["bike", 8, "chicken"], ["pho", 12], ["ganh", 6, "fruit"], ["barrier", 6]],
-    [["slime", 28], ["flower", 14], ["xichlo", 16], ["puddle", 12], ["bike", 10, "dao"], ["ganh", 12, "com"], ["bike", 8, "nonla"]],
-    [["slime", 30], ["stools", 20], ["bike", 10, "chicken"], ["barrier", 10], ["puddle", 8], ["flower", 10], ["bike", 8, "fridge"], ["pho", 8]],
+    [["slime", 28], ["flower", 14], ["xichlo", 16], ["bike", 10, "dao"], ["ganh", 12, "com"], ["bike", 8, "nonla"]],
+    [["slime", 30], ["stools", 20], ["bike", 10, "chicken"], ["barrier", 10], ["flower", 10], ["bike", 8, "fridge"], ["pho", 8]],
   ];
   const ZONE_SLIME = ["ketxe", "muaphun", "manom"];
 
@@ -805,10 +805,11 @@
   ];
   const CAMEOS = [
     { kind: "auntie", name: "Cô bán trà đá", x: 820, say: "Đẹp trai thế!" },
-    { kind: "fan", name: "Hội bạn thân", x: 2250, say: `Cố lên ${W.groom.name}!` },
+    { kind: "fan", who: "quyen", x: 1450 },
+    { kind: "fan", who: "haminh", x: 2600 },
     { kind: "auntie", name: "Bác bán cốm", x: 3300, say: "Đi rước dâu à? Chúc mừng nhé!" },
     { kind: "auntie", name: "Cô chủ quán cà phê", x: TRAIN_X - 60, say: "Tàu đến! Đứng sát vào!" },
-    { kind: "fan", name: "Hội bạn thân", x: 4950, say: "Sắp tới nhà gái rồi!" },
+    { kind: "fan", who: "thang", x: 4950 },
   ];
 
   const speedAt = (prog) => SPEED0 + (SPEED1 - SPEED0) * prog;
@@ -831,7 +832,7 @@
       list.push(o);
       let w = o.w;
       if (type === "slime" && prog > 0.22 && r() < 0.35) { list.push({ ...o, x: x + 20, phase: o.phase + 1.5 }); w += 20; }
-      if (type !== "slime" && type !== "puddle" && r() < 0.45) { // arc of hearts rewards a clean jump
+      if (type !== "slime" && r() < 0.45) { // arc of hearts rewards a clean jump
         const top = Math.max(54, o.h + 30);
         [[-10, 34], [w / 2 - 3, top], [w + 4, 34]].forEach(([dx, dy]) => list.push({ type: "heart", x: x + dx, y: GY - dy }));
       }
@@ -857,7 +858,10 @@
       if (k2 < 0.24) list.push({ type: "lixi", x: Math.round(cx - 3), y: GY - 46 });
       else if (k2 < 0.52) for (let i = 0; i < 3; i++) list.push({ type: "heart", x: Math.round(cx - 18 + i * 12), y: GY - 14 });
     }
-    for (const c of CAMEOS) list.push({ type: "cameo", kind: c.kind, name: c.name, x: c.x, say: c.say });
+    for (const c of CAMEOS) {
+      const f = c.who && FRIENDS[c.who];
+      list.push({ type: "cameo", kind: c.kind, who: c.who, name: f ? f.name : c.name, x: c.x, say: f ? f.say : c.say });
+    }
     return list.sort((a, b) => a.x - b.x);
   }
 
@@ -909,7 +913,7 @@
       friend: { name: "Anh em bê tráp", face: faceURL(SPR.friendA) },
       cousin: { name: "Chị em nhà gái", face: faceURL(SPR.cousin) },
       auntie: { name: "Cô bán trà đá", face: faceURL(SPR.auntie) },
-      fan: { name: "Hội bạn thân", face: faceURL(SPR.fan) },
+      ...Object.fromEntries(Object.entries(FRIENDS).map(([k, f]) => [k, { name: f.name, face: faceURL(SPR.fans[k]) }])),
     });
   }
   function talk(who, text, o = {}) { // who = speaker key, or null for a narrator line
@@ -1120,7 +1124,7 @@
       if (e.done || (e.x + 46 < px && e.type !== "cameo")) continue;
       switch (e.type) {
         case "cameo":
-          if (!e.said && e.x < cam + VW - 16) { e.said = true; e.talking = talk(e.kind, e.say, { name: e.name }); }
+          if (!e.said && e.x < cam + VW - 16) { e.said = true; e.talking = talk(e.who || e.kind, e.say, { name: e.name }); }
           break;
         case "heart": case "lixi": {
           const ib = e.type === "heart" ? { x: e.x, y: e.y, w: 7, h: 6 } : { x: e.x, y: e.y, w: 6, h: 7 };
@@ -1193,7 +1197,7 @@
     speedMul = 0.45;
     popup(cam + playerX(), pl.y - 22, String(PTS.hit), "#ff5a5a");
     burst(cam + playerX() + 6, pl.y - 8, ["#ffffff", "#ffd75a"], 8, 35);
-    say(e.type === "puddle" ? "Ướt hết giày rồi!" : pick(OUCH), { follow: "groom", life: 1.1 });
+    say(pick(OUCH), { follow: "groom", life: 1.1 });
     if (navigator.vibrate) try { navigator.vibrate(40); } catch (_) {}
   }
 
@@ -1244,7 +1248,7 @@
         R(x + 10, GY - 30, 1, 22, "#6b4226");
         parts(x, GY, [[4, -36, 14, 7, "#ffffff"]]);
         ctx.drawImage(SPR.heart, x + 8, GY - 35);
-        ctx.drawImage(SPR.fan, x, GY - 15 + bob);
+        ctx.drawImage(SPR.fans[e.who], x, GY - 15 + bob);
       } else ctx.drawImage(SPR.auntie, x, GY - 17 + bob);
     }
 
