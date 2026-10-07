@@ -14,13 +14,13 @@ window.WEDDING = {
 
   // Parents — shown in the "Nhà Trai / Nhà Gái" section
   groomFamily: {
-    father: "Ông. Vũ Tự Cường",
-    mother: "Bà. Phạm Thanh Ngà",
+    father: "Ông Vũ Tự Cường",
+    mother: "Bà Phạm Thanh Ngà",
     address: "Hà Nội",
   },
   brideFamily: {
-    father: "Ông. Nguyễn Bội Hồng Minh",
-    mother: "Bà. Nguyễn Mai Hương",
+    father: "Ông Nguyễn Bội Hồng Minh",
+    mother: "Bà Nguyễn Mai Hương",
     address: "Hà Nội",
   },
 

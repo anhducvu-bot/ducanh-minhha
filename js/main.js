@@ -33,7 +33,7 @@
     else el.textContent = v;
   });
 
-  // Parents' names: "Ông. Nguyễn Bội Hồng Minh" must always stay on ONE line.
+  // Parents' names: "Ông Nguyễn Bội Hồng Minh" must always stay on ONE line.
   // The two family columns size to their names; if side by side doesn't fit
   // the screen, stack Nhà Trai above Nhà Gái (names keep their full size).
   const familyGrid = $(".family-grid");
