@@ -67,7 +67,7 @@ window.WEDDING = {
   // YouTube:  { youtube: "<link>", start: <seconds>, autoplay: true }
   // MP3 file: { file: "assets/music/song.mp3", start: <seconds>, autoplay: true }   ·   "" = no music
   music: {
-    youtube: "https://www.youtube.com/watch?v=y24y3lh8Uw8", // Tặng vịu ơ Minh Hà
+    youtube: "https://www.youtube.com/watch?v=LdeAaiSwqfY", // NARUTO and HINATA — Yasuharu Takanashi
     start: 0,
     autoplay: true,
   },
