@@ -25,7 +25,7 @@ window.WEDDING = {
   },
 
   // Reception date/time, local time (YYYY-MM-DDTHH:mm)
-  date: "2026-11-28T11:30",
+  date: "2026-11-28T11:00",
   // Lunar date text (Âm lịch) — write it yourself, e.g. from a lunar calendar
   lunarDate: "Tức ngày 20 tháng 10 năm Bính Ngọ",
 
