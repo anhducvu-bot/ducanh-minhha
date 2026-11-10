@@ -18,7 +18,7 @@
     }
     const name = form.elements.name.value.trim();
     if (!name) {
-      status.textContent = "Vui lòng nhập tên của bạn.";
+      status.textContent = "Vui lòng nhập tên của quý vị.";
       form.elements.name.focus();
       return;
     }
@@ -35,8 +35,8 @@
       form.classList.add("done");
       status.textContent =
         data.get("attending") === "Có"
-          ? "Cảm ơn bạn! Hẹn gặp bạn trong ngày vui 💕"
-          : "Cảm ơn bạn đã phản hồi. Chúng mình rất trân quý sự quan tâm của bạn!";
+          ? "Cảm ơn quý vị! Hẹn gặp quý vị trong ngày vui 💕"
+          : "Cảm ơn quý vị đã phản hồi. Chúng mình rất trân quý sự quan tâm của quý vị!";
     } catch (err) {
       console.error(err);
       status.textContent = "Gửi không thành công, vui lòng thử lại.";
