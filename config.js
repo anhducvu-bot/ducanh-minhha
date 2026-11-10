@@ -57,7 +57,7 @@ window.WEDDING = {
   photos: [
     "assets/photos/1.jpeg",
     "assets/photos/2.jpeg",
-    "assets/photos/img_3.jpeg",
+    { src: "assets/photos/e4dd95c6-e6df-4d43-83a2-c9cfc3f591a7.jpeg", focus: "50% 85%" },
     "assets/photos/4.jpeg",
     "assets/photos/40ec6469-097e-46b4-a1e3-f2c947498edb.jpeg",
     { src: "assets/photos/d5e1ceea-3689-44cc-a8f5-9c7bc2ef066d.jpeg", focus: "50% 80%" },
