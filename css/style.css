@@ -347,6 +347,13 @@ body:not(.locked) .fab-group { opacity: 1; pointer-events: auto; }
   image-rendering: pixelated; image-rendering: crisp-edges;
   border: 3px solid var(--red); border-radius: 6px; box-shadow: 0 0 0 3px var(--gold-soft);
 }
+/* How to play, shown on the invitation before "Chơi ngay" */
+.game-howto {
+  list-style: none; margin: 16px auto 0; padding: 12px 18px; max-width: 300px; text-align: left;
+  border: 1px solid var(--gold-soft); border-radius: 12px; background: rgba(255, 255, 255, .55);
+}
+.game-howto li { position: relative; padding-left: 20px; margin: 2px 0; }
+.game-howto li::before { content: "❖"; position: absolute; left: 0; top: .2em; font-size: .75em; color: var(--gold); }
 .lb-mini { margin-top: 16px; font-family: "VT323", monospace; font-size: 1.25rem; }
 .lb-best { color: var(--muted); margin-top: 6px; }
 

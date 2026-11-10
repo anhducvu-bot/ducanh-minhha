@@ -1388,8 +1388,7 @@
   // ---------- Open / close / input ----------
   function setMsg(html, light) { msgEl.innerHTML = html; msgEl.hidden = !html; msgEl.classList.toggle("light", !!light); }
 
-  const START_MSG = "<b>Chạm để bắt đầu</b><span>Chạm để nhảy<br>Nhảy lên đầu slime để hạ gục<br>" +
-    "Gom anh em bê tráp và 5 lễ vật<br>Nhặt lì xì để qua cổng nhà gái!</span>";
+  const START_MSG = "<b>Chạm để bắt đầu</b>"; // how-to-play lives on the invitation's game card
 
   function openGame() {
     overlay.hidden = false;
