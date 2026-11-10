@@ -1,6 +1,6 @@
 /* Mini game "Rước Dâu" — a pixel wedding procession through Hà Nội.
    Phố cổ → Hồ Gươm → Phố đường tàu → the bride's "Vu Quy" gate.
-   Tap to jump (tap again in the air for a double jump). Land on slimes to
+   Tap to jump (tap again in the air for a double jump). Land on monsters to
    defeat them, collect the 5 lễ vật of the mâm quả, pick up groomsmen,
    and save lì xì for the cousins guarding the gate. */
 (function () {
@@ -161,26 +161,22 @@
     "..kUUk.kUUk.",
     "..kkk...kkk.",
   ]);
+  // Quái vật: horned monster with angry brows and fangs (frame B: walking, tongue out)
   const SLIME = [
-    "...kkkk...",
-    ".kkllllkk.",
-    "kllWWllllk",
-    "klWllllllk",
-    "kllellellk",
-    "klpllllplk",
-    "kLLllllLLk",
-    ".kkkkkkkk.",
-  ];
-  const SLIME_SQUISH = [
-    "..........",
-    "...kkkk...",
-    ".kkllllkk.",
-    "kllWWllllk",
-    "kllellellk",
-    "klpllllplk",
+    "k........k",
+    "kzk....kzk",
+    ".kzkkkkzk.",
+    "kllllllllk",
+    "klkllllklk",
+    "kllkllkllk",
+    "klWWllWWlk",
+    "klWkllkWlk",
+    "kllkkkkllk",
+    "klkWkkWklk",
     "kLLLLLLLLk",
-    "kkkkkkkkkk",
+    ".kLk..kLk.",
   ];
+  const SLIME_SQUISH = SLIME.slice(0, 9).concat(["klkWrrWklk", "kLLLLLLLLk", "..kLkkLk.."]);
   const HEART = [".kk.kk.", "kWrkrrk", "krrrrrk", ".krrrk.", "..krk..", "...k..."];
   const HOASUA = [".w.w.w.", "wzwzwzw", ".wwwww.", "..fFf..", "...F..."];
   const LIXI = ["kkkkkk", "kRRRRk", "krggrk", "krggrk", "krrrrk", "krrrrk", "kkkkkk"];
@@ -310,7 +306,7 @@
 
   // ---------- Obstacles ----------
   const SIZE = {
-    slime: { w: 10, h: 8 }, bike: { w: 24, h: 14 }, pho: { w: 28, h: 17 }, flower: { w: 24, h: 22 },
+    slime: { w: 10, h: 10 }, bike: { w: 24, h: 14 }, pho: { w: 28, h: 17 }, flower: { w: 24, h: 22 },
     stools: { w: 34, h: 11 }, xichlo: { w: 30, h: 22 }, ganh: { w: 28, h: 12 }, barrier: { w: 22, h: 13 },
   };
   const BIKE_LOAD_H = { nonla: 14, fridge: 27, chicken: 25, dao: 30 };
@@ -1158,7 +1154,7 @@
           talk("friend", pick(FRIEND_LINES));
           break;
         case "slime": {
-          const hop = slimeHop(e), sb = { x: e.x + 1, y: GY - 7 - hop, w: 8, h: 7 };
+          const hop = slimeHop(e), sb = { x: e.x + 1, y: GY - 9 - hop, w: 8, h: 9 }; // head + body (horns don't count)
           if (!hit(box, sb)) break;
           if (riding || (pl.vy > 0 && prevFeet <= sb.y + 4)) {
             e.done = true; stats.slimes++;
@@ -1273,15 +1269,14 @@
           break;
         }
         case "slime": {
-          const hop = slimeHop(e), sp = SPR.slimes[e.kind], y = Math.round(GY - 8 - hop);
+          const hop = slimeHop(e), sp = SPR.slimes[e.kind], y = Math.round(GY - 12 - hop);
           if (e.kind === "manom") ctx.globalAlpha = 0.85;
           ctx.drawImage(hop > 0.5 ? sp.a : sp.b, x, y);
           ctx.globalAlpha = 1;
-          if (e.kind === "ketxe") { R(x + 3, y - 2, 4, 2, "#3b7dd8"); R(x + 2, y - 1, 6, 1, "#2a5ba8"); }
-          else if (e.kind === "muaphun") {
+          if (e.kind === "muaphun") { // its own little drizzle cloud
             R(x + 2, y - 6, 6, 2, "#ffffff"); R(x + 3, y - 7, 4, 1, "#ffffff");
             R(x + 3, y - 3 + Math.floor((t * 12) % 3), 1, 1, "#5a8fd6"); R(x + 6, y - 3 + Math.floor((t * 12 + 1) % 3), 1, 1, "#5a8fd6");
-          } else { R(x - 1, y + 3 + Math.floor((t * 6) % 3), 1, 1, "#9fd3e0"); R(x + 10, y + 2 + Math.floor((t * 6 + 1) % 3), 1, 1, "#9fd3e0"); }
+          } else if (e.kind === "manom") { R(x - 1, y + 3 + Math.floor((t * 6) % 3), 1, 1, "#9fd3e0"); R(x + 10, y + 2 + Math.floor((t * 6 + 1) % 3), 1, 1, "#9fd3e0"); }
           break;
         }
         default: DRAW[e.type](x, e, t);
@@ -1463,7 +1458,7 @@
     clearDialog();
     const n = stats.items.length;
     const rows = [
-      [`Slime hạ gục × ${stats.slimes}`, stats.slimes * PTS.slime],
+      [`Quái vật hạ gục × ${stats.slimes}`, stats.slimes * PTS.slime],
       [`Tim & hoa sữa × ${stats.hearts}`, stats.hearts * PTS.heart],
       [`Lì xì × ${stats.lixi}`, stats.lixi * PTS.lixi],
       [`Lễ vật ${n}/${ITEM_ORDER.length}`, n * PTS.item],
@@ -1525,7 +1520,7 @@
     const jumpY = [0, 3, 6, 8, 9, 8, 6, 3][pvFrame % 16] || 0;
     pctx.drawImage(pvFrame % 2 ? SPR.friendA : SPR.friendB, 0, g - 16);
     pctx.drawImage(pvFrame % 2 ? SPR.runA : SPR.runB, 13, g - 16 - jumpY);
-    pctx.drawImage(pvFrame % 4 < 2 ? SPR.slimes.ketxe.a : SPR.slimes.ketxe.b, 34, g - 8);
+    pctx.drawImage(pvFrame % 4 < 2 ? SPR.slimes.ketxe.a : SPR.slimes.ketxe.b, 34, g - 12);
     pctx.drawImage(SPR.heart, 34, g - 22 + (pvFrame % 4 < 2 ? 0 : 1));
     pctx.drawImage(SPR.bride, w - 16, g - 18);
   }
