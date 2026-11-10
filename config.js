@@ -43,12 +43,10 @@ window.WEDDING = {
   defaultGuest: "Quý khách",
 
   timeline: [
-    // DRAFT — adjust once the real schedule is known
-    { time: "10:30", title: "Đón khách & chụp ảnh" },
-    { time: "11:30", title: "Lễ thành hôn" },
-    { time: "12:00", title: "Khai tiệc" },
-    { time: "12:45", title: "Giao lưu & âm nhạc" },
-    { time: "13:30", title: "Tiễn khách" },
+    { time: "10:30", title: "Đón khách" },
+    { time: "11:00", title: "Lễ thành hôn" },
+    { time: "11:15", title: "Khai tiệc" },
+    { time: "11:30", title: "Giao lưu" },
   ],
 
   // Photos (put files in assets/photos/). First one is used on the cover.
