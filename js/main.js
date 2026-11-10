@@ -48,7 +48,9 @@
   document.title = `Thiệp cưới ${W.groom.name} & ${W.bride.name}`;
 
   // Cover + desktop backdrop
-  const cover = W.coverPhoto || W.photos[0];
+  // Album entries are "path.jpeg" or { src, focus } — focus sets which part stays visible when cropped
+  const photos = W.photos.map((p) => (typeof p === "string" ? { src: p } : p));
+  const cover = W.coverPhoto || photos[0].src;
   $("#coverImg").src = cover;
   if (W.coverText === "bottom") $(".cover").classList.add("text-bottom");
 
@@ -99,12 +101,13 @@
   // Gallery + lightbox
   (function renderGallery() {
     const g = $("#gallery");
-    W.photos.forEach((src, i) => {
+    photos.forEach(({ src, focus }, i) => {
       const b = document.createElement("button");
       b.type = "button";
       b.setAttribute("aria-label", `Xem ảnh ${i + 1}`);
       const img = document.createElement("img");
       img.src = src;
+      if (focus) img.style.objectPosition = focus;
       img.alt = `Ảnh cưới ${i + 1}`;
       img.loading = "lazy";
       b.appendChild(img);
@@ -114,7 +117,7 @@
 
     const lb = $("#lightbox"), lbImg = $("img", lb);
     let idx = 0;
-    const show = (i) => { idx = (i + W.photos.length) % W.photos.length; lbImg.src = W.photos[idx]; };
+    const show = (i) => { idx = (i + photos.length) % photos.length; lbImg.src = photos[idx].src; };
     function openLb(i) { show(i); lb.hidden = false; }
     const close = () => (lb.hidden = true);
     $(".lb-close", lb).onclick = close;

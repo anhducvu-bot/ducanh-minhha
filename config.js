@@ -52,12 +52,15 @@ window.WEDDING = {
   // Photos (put files in assets/photos/). First one is used on the cover.
   coverPhoto: "assets/photos/cover.jpg",
   coverText: "top", // where the names sit on the cover photo: "top" or "bottom"
+  // Each entry is a path, or { src, focus } where focus ("50% 80%" = horizontal, vertical)
+  // chooses which part of the photo stays visible when the album crops it.
   photos: [
     "assets/photos/1.jpeg",
     "assets/photos/2.jpeg",
-    "assets/photos/3.jpeg",
+    "assets/photos/img_3.jpeg",
     "assets/photos/4.jpeg",
-    "assets/photos/5.jpeg",
+    "assets/photos/40ec6469-097e-46b4-a1e3-f2c947498edb.jpeg",
+    { src: "assets/photos/d5e1ceea-3689-44cc-a8f5-9c7bc2ef066d.jpeg", focus: "50% 80%" },
   ],
 
   // Background music. With autoplay: true it starts when the guest taps "Mở thiệp";
