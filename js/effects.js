@@ -24,10 +24,16 @@
     console.warn("Music failed to play:", err);
   };
 
+  // Zalo's in-app browser plays YouTube full screen (it took over the invitation as soon
+  // as the music started), so inside Zalo we never load YouTube. An mp3 file still works there.
+  const inZalo = /zalo/i.test(navigator.userAgent);
+  const ZALO_HINT = "🎵 Để nghe nhạc, hãy mở thiệp bằng Safari hoặc Chrome (bấm ••• → Mở bằng trình duyệt)";
+
   // Each player exposes: play(quiet), pause(), playing(), audible()
   let player = null;
-  if (music.youtube) player = setupYouTube(youtubeId(music.youtube));
+  if (music.youtube && !inZalo) player = setupYouTube(youtubeId(music.youtube));
   else if (music.file) player = setupAudioFile(music.file);
+  else if (music.youtube && inZalo) musicBtn.addEventListener("click", () => window.showToast(ZALO_HINT, 5000));
   else musicBtn.hidden = true;
 
   let userPaused = false;
@@ -42,6 +48,7 @@
   document.getElementById("openBtn").addEventListener("click", () => {
     burst(24);
     setTimeout(() => burst(16), 900);
+    if (!player && music.youtube && inZalo) { setTimeout(() => window.showToast(ZALO_HINT, 5000), 1200); return; }
     if (!player || !music.autoplay) return;
     player.play(true);
     // If the phone blocked it (e.g. the player was still loading), try once more

@@ -195,11 +195,11 @@
   $$(".reveal").forEach((el) => io.observe(el));
 
   // Shared toast helper
-  window.showToast = function (msg) {
+  window.showToast = function (msg, ms) {
     const t = $("#toast");
     t.textContent = msg;
     t.classList.add("show");
     clearTimeout(t._h);
-    t._h = setTimeout(() => t.classList.remove("show"), 2600);
+    t._h = setTimeout(() => t.classList.remove("show"), ms || 2600);
   };
 })();
