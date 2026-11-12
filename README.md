@@ -31,13 +31,14 @@ https://anhducvu-bot.github.io/ducanh-minhha/?to=Gia%20đình%20cô%20Lan
 
 Without `?to=`, the page shows "Quý khách".
 
-## 4. RSVP → Google Sheet (free)
+## 4. RSVP + game scores → Google Sheet (free)
 
 1. Create a Google Sheet, then open **Extensions → Apps Script**.
 2. Replace the code with the contents of `apps-script/Code.gs` and save.
 3. Click **Deploy → New deployment → Web app**. Set *Execute as*: **Me** and *Who has access*: **Anyone**. Click Deploy and authorize.
 4. Copy the Web app URL (it ends in `/exec`) into `config.js → sheetEndpoint`.
 5. Submit a test RSVP. A new **RSVP** tab appears in the Sheet with the response.
+6. Finish the mini game, type a name (optional) and tap **Lưu điểm**. The name and score go into a **"Điểm game"** tab. Nothing is shown back in the game; sort the tab by score to find the winner.
 
 If you change the script later, use **Deploy → Manage deployments → Edit → New version** so the URL stays the same. To remove the RSVP section, set `rsvp: false`.
 

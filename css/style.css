@@ -454,6 +454,14 @@ body.game-open { overflow: hidden; }
 .gr-break li { display: flex; justify-content: space-between; gap: 12px; }
 .gr-break { list-style: none; padding: 10px 0; margin: 0 0 12px; border-top: 2px dashed #e3cf9f; border-bottom: 2px dashed #e3cf9f; font-size: 20px; text-align: left; }
 .gr-break b { font-weight: 400; color: #9e1f24; }
+.gr-save { display: grid; gap: 6px; margin: 0 0 12px; text-align: left; }
+.gr-save label { font-size: 18px; color: #7d6a5c; }
+.gr-save-row { display: flex; gap: 8px; }
+.gr-save input {
+  flex: 1; min-width: 0; font: inherit; font-size: 20px; padding: 4px 8px;
+  border: 3px solid #2a1410; border-radius: 0; background: #fff; color: #3a2a22;
+}
+.gr-save .gbtn { flex: none; font-size: 20px; padding: 4px 10px; }
 .gr-actions { display: flex; gap: 10px; justify-content: center; }
 .gbtn {
   font: inherit; font-size: 22px; padding: 6px 16px; cursor: pointer; border-radius: 0;

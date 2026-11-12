@@ -1479,6 +1479,14 @@
         <p class="gr-score">${score}</p>
         <p class="gr-best">${isBest ? "Kỷ lục mới của bạn!" : "Kỷ lục của bạn: " + prevBest}</p>
         <ul class="gr-break">${rows.map(([l, v]) => `<li><span>${esc(l)}</span><b>${v > 0 ? "+" : ""}${v}</b></li>`).join("")}</ul>
+        ${W.sheetEndpoint ? `
+        <form class="gr-save" id="grSave">
+          <label for="grName">Ghi tên để lưu điểm</label>
+          <div class="gr-save-row">
+            <input id="grName" maxlength="30" placeholder="Tên của bạn" value="${esc(defaultName())}" autocomplete="name">
+            <button class="gbtn gbtn-gold" type="submit">Lưu điểm</button>
+          </div>
+        </form>` : ""}
         <div class="gr-actions">
           <button class="gbtn gbtn-gold" id="grAgain" type="button">Chơi lại</button>
           <button class="gbtn" id="grBack" type="button">Về thiệp</button>
@@ -1489,6 +1497,34 @@
     resultEl.scrollTop = 0;
     $("grAgain").onclick = () => { resultEl.hidden = true; reset(); state = "idle"; setMsg(START_MSG); };
     $("grBack").onclick = closeGame;
+    const form = $("grSave");
+    if (form) form.onsubmit = (e) => { e.preventDefault(); saveScore(form, score); };
+  }
+
+  // Name for the score: last name typed here, else the guest's ?to= link
+  function defaultName() {
+    return store.get("guestName") || new URLSearchParams(location.search).get("to") || "";
+  }
+
+  // Record name + score in the couple's Google Sheet (tab "Điểm game"); nothing is shown back
+  async function saveScore(form, score) {
+    const btn = form.querySelector("button"), input = form.elements.grName;
+    const name = input.value.trim().slice(0, 30) || "Khách bí ẩn";
+    btn.disabled = true; btn.textContent = "Đang lưu...";
+    const data = new FormData();
+    data.append("type", "score");
+    data.append("name", name);
+    data.append("score", score);
+    data.append("guestLink", new URLSearchParams(location.search).get("to") || "");
+    try {
+      // no-cors: Apps Script doesn't return CORS headers; the request still arrives.
+      await fetch(W.sheetEndpoint, { method: "POST", mode: "no-cors", body: data });
+      if (name !== "Khách bí ẩn") store.set("guestName", name);
+      btn.textContent = "Đã lưu ✓"; input.disabled = true;
+    } catch (err) {
+      console.warn(err);
+      btn.disabled = false; btn.textContent = "Thử lại";
+    }
   }
 
   function dateText() {
