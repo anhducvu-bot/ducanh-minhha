@@ -68,7 +68,7 @@ window.WEDDING = {
   // YouTube:  { youtube: "<link>", start: <seconds>, autoplay: true }
   // MP3 file: { file: "assets/music/song.mp3", start: <seconds>, autoplay: true }   ·   "" = no music
   music: {
-    youtube: "https://www.youtube.com/watch?v=iltEHB23BgE", // Thế Giới Của Anh (Piano Version) — LaKi cover
+    file: "assets/music/the-gioi-cua-anh-piano.mp3", // Thế Giới Của Anh (Piano Version) — LaKi cover
     start: 0,
     autoplay: true,
   },
